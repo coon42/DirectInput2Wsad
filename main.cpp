@@ -23,6 +23,7 @@ private:
 
 Input::Input() {
 	HRESULT result = 0;
+
 	result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8,
 			(void**)&pInput_, NULL);
 
@@ -51,14 +52,16 @@ void Input::enumGamepads() {
 
 BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 	Input* const pThis = static_cast<Input*>(pVref);		
-	printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);	
+	printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);		
 
 	// TODO: make configurable over ini file:
 	if (pThis->enumCount_ == 1) {
+		HRESULT result{0};
+
 		pThis->pGamepadInstance_ = pLpddi;
 		printf(" [selected]\n");
 
-		HRESULT result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
+		result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
 		if (FAILED(result)) {
 			printf("Failed to create gamepad!\n");
 			throw result;
@@ -75,11 +78,11 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 
 			// TODO: set window title to unique name
 			HWND hWnd = 0;
-			hWnd = FindWindow(NULL, pTitle);
+			hWnd = FindWindow(NULL, pTitle);			
 
 			if (hWnd == INVALID_HANDLE_VALUE)
 				throw "Cannot obtain hwnd because window was not found!";
-
+						
 			return hWnd;
 		};
 		
@@ -112,11 +115,29 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 
 		printf("Gamepad capabilities:\n");		
 		printf("  Axes: %d\n", caps.dwAxes);
-		printf("  Buttons: %d\n", caps.dwButtons);		
+		printf("  Buttons: %d\n", caps.dwButtons);
+
+		result = pThis->pGamepadDevice_->Acquire();
+
+		if (FAILED(result)) {
+			printf("Failed to acquire gamepad!\n");
+			throw result;
+		}
+
+		printf("Gamepad acquired.\n");
+
+		pThis->pGamepadDevice_->Unacquire();
+
+		if (FAILED(result)) {
+			printf("Failed unacquire gamepad!\n");
+			throw result;
+		}
+
+		printf("Gamepad unacquired.\n");
 	}
 	else
 		printf("\n");
-		
+	
 	pThis->enumCount_++;
 
 	return DIENUM_CONTINUE;

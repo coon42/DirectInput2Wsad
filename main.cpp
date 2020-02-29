@@ -91,6 +91,15 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 		}
 
 		printf("Cooperation level set.\n");
+
+		result = pThis->pGamepadDevice_->SetDataFormat(&c_dfDIJoystick);
+
+		if (FAILED(result)) {
+			printf("Failed to set data format!\n");
+			throw result;
+		}
+
+		printf("Data format set.\n");
 	}
 	else
 		printf("\n");

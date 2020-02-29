@@ -100,6 +100,19 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 		}
 
 		printf("Data format set.\n");
+
+		DIDEVCAPS caps;
+		caps.dwSize = sizeof(DIDEVCAPS);
+		result = pThis->pGamepadDevice_->GetCapabilities(&caps);
+
+		if (FAILED(result)) {
+			printf("Failed to get gamepad capabilities!\n");
+			throw result;
+		}
+
+		printf("Gamepad capabilities:\n");		
+		printf("  Axes: %d\n", caps.dwAxes);
+		printf("  Buttons: %d\n", caps.dwButtons);		
 	}
 	else
 		printf("\n");

@@ -198,9 +198,89 @@ void Input::process() {
 
 	printf("Gamepad acquired.\n");
 	
+	struct DualShock2State {
+		bool triangle;
+		bool circle;
+		bool cross;
+		bool square;
+		bool start;
+		bool select;
+		bool l1;
+		bool l2;
+		bool r1;
+		bool r2;
+		bool leftStick;
+		bool rightStick;
+		bool north;
+		bool east;
+		bool south;
+		bool west;
+	};
+
+	auto joystate2Psx = [](const DIJOYSTATE& joyState) -> DualShock2State {
+		DualShock2State state{0};
+		state.triangle = joyState.rgbButtons[0];
+		state.circle = joyState.rgbButtons[1];
+		state.cross = joyState.rgbButtons[2];
+		state.square = joyState.rgbButtons[3];
+		state.start = joyState.rgbButtons[9];
+		state.select = joyState.rgbButtons[8];
+		state.l1 = joyState.rgbButtons[6];
+		state.l2 = joyState.rgbButtons[4];
+		state.r1 = joyState.rgbButtons[7];
+		state.r2 = joyState.rgbButtons[5];
+		state.leftStick = joyState.rgbButtons[10];
+		state.rightStick = joyState.rgbButtons[11];
+
+		switch (joyState.rgdwPOV[0]) {			
+			case 0:
+				state.north = true;
+				break;
+
+			case 4500:
+				state.north = true;
+				state.east = true;					
+				break;
+
+			case 9000: 
+				state.east = true;
+				break;
+
+			case 13500: 
+				state.east = true;
+				state.south = true;
+				break;
+
+			case 18000:
+				state.south = true;
+				break;
+
+			case 22500:
+				state.south = true;
+				state.west = true;
+				break;
+
+			case 27000:
+				state.west = true;
+				break;
+
+			case 31500:
+				state.west = true;
+				state.north = true;
+				break;
+		}
+
+		return state;
+	};
+
 	while (running_) {		
-		if (WaitForSingleObject(hGamepadEvent, INFINITE) == STATUS_WAIT_0)
+		if (WaitForSingleObject(hGamepadEvent, INFINITE) == STATUS_WAIT_0) {
+			DIJOYSTATE joyState;			
+			pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
+		
+			const DualShock2State psxState = joystate2Psx(joyState);;					
 			printf("event!\n");
+		}
 	}
 
 	pGamepadDevice_->Unacquire();

@@ -12,6 +12,7 @@ public:
 
 	IDirectInput8* pInput() const { return pInput_; }
 	void enumGamepads(); // TODO: make private
+	void process();
 
 private:
 	void createDummyWindow();
@@ -24,6 +25,7 @@ private:
 	int enumCount_{0};
 	HWND hWnd_{0};
 	const HINSTANCE hInstance_{0};
+	bool running_{true};
 };
 
 Input::Input() : hInstance_(GetModuleHandle(NULL)) {
@@ -37,7 +39,7 @@ Input::Input() : hInstance_(GetModuleHandle(NULL)) {
 		throw result;
 }
 
-Input::~Input() {
+Input::~Input() {	
 	if (pGamepadDevice_) {
 		pGamepadDevice_->Release();
 		pGamepadDevice_ = nullptr;
@@ -46,7 +48,10 @@ Input::~Input() {
 	if (pInput_) {
 		pInput_->Release();
 		pInput_ = nullptr;
-	}		
+	}
+
+	DestroyWindow(hWnd_);
+	hWnd_ = 0;
 }
 
 LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
@@ -165,25 +170,7 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 
 		printf("Gamepad capabilities:\n");		
 		printf("  Axes: %d\n", caps.dwAxes);
-		printf("  Buttons: %d\n", caps.dwButtons);
-
-		result = pThis->pGamepadDevice_->Acquire();
-
-		if (FAILED(result)) {
-			printf("Failed to acquire gamepad!\n");
-			throw result;
-		}
-
-		printf("Gamepad acquired.\n");
-
-		pThis->pGamepadDevice_->Unacquire();
-
-		if (FAILED(result)) {
-			printf("Failed unacquire gamepad!\n");
-			throw result;
-		}
-
-		printf("Gamepad unacquired.\n");
+		printf("  Buttons: %d\n", caps.dwButtons);		
 	}
 	else
 		printf("\n");
@@ -193,9 +180,46 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 	return DIENUM_CONTINUE;
 }
 
+void Input::process() {
+	HANDLE hGamepadEvent = CreateEvent(NULL, NULL, FALSE, NULL);
+
+	if (!hGamepadEvent)
+		throw "Failed to create event";
+
+	pGamepadDevice_->SetEventNotification(hGamepadEvent);
+
+	HRESULT result;
+	result = pGamepadDevice_->Acquire();
+
+	if (FAILED(result)) {
+		printf("Failed to acquire gamepad!\n");
+		throw result;
+	}
+
+	printf("Gamepad acquired.\n");
+	
+	while (running_) {		
+		if (WaitForSingleObject(hGamepadEvent, INFINITE) == STATUS_WAIT_0)
+			printf("event!\n");
+	}
+
+	pGamepadDevice_->Unacquire();
+
+	if (FAILED(result)) {
+		printf("Failed unacquire gamepad!\n");
+		throw result;
+	}
+
+	printf("Gamepad unacquired.\n");
+
+	if (hGamepadEvent)
+		CloseHandle(hGamepadEvent);
+}
+
 int main(const char* pArgs, int argc) {	
 	Input input;	
 	IDirectInput8* pInput = input.pInput();
 	
 	input.enumGamepads();
+	input.process();
 }

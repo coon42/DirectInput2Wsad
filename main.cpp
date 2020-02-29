@@ -14,16 +14,22 @@ public:
 	void enumGamepads(); // TODO: make private
 
 private:
+	void createDummyWindow();
+
 	static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
+	static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 	IDirectInput8* pInput_{nullptr};
 	LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
 	LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
 	int enumCount_{0};
+	HWND hWnd_{0};
+	const HINSTANCE hInstance_{0};
 };
 
-Input::Input() {
-	HRESULT result = 0;
+Input::Input() : hInstance_(GetModuleHandle(NULL)) {
+	createDummyWindow();
 
+	HRESULT result = 0;
 	result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8,
 			(void**)&pInput_, NULL);
 
@@ -41,6 +47,67 @@ Input::~Input() {
 		pInput_->Release();
 		pInput_ = nullptr;
 	}		
+}
+
+LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+	switch (message) {
+		case WM_ACTIVATE: {		
+			break;
+		}
+	
+		case WM_COMMAND: {
+			int wmId = LOWORD(wParam);
+		
+			break;
+		}
+	
+		case WM_PAINT: {
+			PAINTSTRUCT ps;
+			HDC hdc = BeginPaint(hWnd, &ps);
+			// TODO: Add any drawing code that uses hdc here...
+			EndPaint(hWnd, &ps);
+			break;
+		}
+	
+		case WM_DESTROY: {
+			PostQuitMessage(0);
+			break;
+		}
+	
+		default:
+			return DefWindowProc(hWnd, message, wParam, lParam);
+	}
+
+	return 0;
+}
+
+void Input::createDummyWindow() {
+	WNDCLASSEX wcex;
+	wcex.cbSize = sizeof(WNDCLASSEX);
+
+	wcex.style = CS_HREDRAW | CS_VREDRAW;
+	wcex.lpfnWndProc = _wndProc;
+	wcex.cbClsExtra = 0;
+	wcex.cbWndExtra = 0;
+	wcex.hInstance = hInstance_;
+	wcex.hIcon = 0;
+	wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+	wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+	wcex.lpszMenuName = NULL;
+	wcex.lpszClassName = "Dummy";
+	wcex.hIconSm = 0;
+
+	ATOM a = RegisterClassEx(&wcex);	
+	a = a;
+
+	hWnd_ = CreateWindow(wcex.lpszClassName, "dummy", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+			0, 100, 100, nullptr, nullptr, hInstance_, nullptr);
+
+	if (!hWnd_)
+		throw false;
+
+	ShowWindow(hWnd_, SW_SHOW);
+	UpdateWindow(hWnd_);
 }
 
 void Input::enumGamepads() {
@@ -68,25 +135,8 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 		}
 
 		printf("Gamepad created.\n");
-
-		auto getConsoleHwnd = []() -> HWND {
-			char pTitle[256];
-			DWORD titleLen = GetConsoleTitle(pTitle, sizeof(pTitle));
-
-			if (!titleLen)
-				throw "Console title cannot be obtained!";
-
-			// TODO: set window title to unique name
-			HWND hWnd = 0;
-			hWnd = FindWindow(NULL, pTitle);			
-
-			if (hWnd == INVALID_HANDLE_VALUE)
-				throw "Cannot obtain hwnd because window was not found!";
-						
-			return hWnd;
-		};
-		
-		result = pThis->pGamepadDevice_->SetCooperativeLevel(getConsoleHwnd(), DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+				
+		result = pThis->pGamepadDevice_->SetCooperativeLevel(pThis->hWnd_, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
 
 		if (FAILED(result)) {
 			printf("Failed to set cooperation level!\n");

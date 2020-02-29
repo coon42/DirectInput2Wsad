@@ -16,7 +16,8 @@ public:
 private:
 	static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
 	IDirectInput8* pInput_{nullptr};
-	LPCDIDEVICEINSTANCE pGamepad_{nullptr};
+	LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
+	LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
 	int enumCount_{0};
 };
 
@@ -30,10 +31,15 @@ Input::Input() {
 }
 
 Input::~Input() {
+	if (pGamepadDevice_) {
+		pGamepadDevice_->Release();
+		pGamepadDevice_ = nullptr;
+	}
+	
 	if (pInput_) {
 		pInput_->Release();
 		pInput_ = nullptr;
-	}
+	}		
 }
 
 void Input::enumGamepads() {
@@ -45,15 +51,50 @@ void Input::enumGamepads() {
 
 BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 	Input* const pThis = static_cast<Input*>(pVref);		
-	printf("%i: %s", pThis->enumCount_, pLpddi->tszInstanceName);	
+	printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);	
 
-	// TODO: make configrable over ini file:
+	// TODO: make configurable over ini file:
 	if (pThis->enumCount_ == 1) {
-		pThis->pGamepad_ = pLpddi;
-		printf(" [selected]");
+		pThis->pGamepadInstance_ = pLpddi;
+		printf(" [selected]\n");
+
+		HRESULT result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
+		if (FAILED(result)) {
+			printf("Failed to create gamepad!\n");
+			throw result;
+		}
+
+		printf("Gamepad created.\n");
+
+		auto getConsoleHwnd = []() -> HWND {
+			char pTitle[256];
+			DWORD titleLen = GetConsoleTitle(pTitle, sizeof(pTitle));
+
+			if (!titleLen)
+				throw "Console title cannot be obtained!";
+
+			// TODO: set window title to unique name
+			HWND hWnd = 0;
+			hWnd = FindWindow(NULL, pTitle);
+
+			if (hWnd == INVALID_HANDLE_VALUE)
+				throw "Cannot obtain hwnd because window was not found!";
+
+			return hWnd;
+		};
+		
+		result = pThis->pGamepadDevice_->SetCooperativeLevel(getConsoleHwnd(), DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+
+		if (FAILED(result)) {
+			printf("Failed to set cooperation level!\n");
+			throw result;
+		}
+
+		printf("Cooperation level set.\n");
 	}
-	
-	printf("\n");
+	else
+		printf("\n");
+		
 	pThis->enumCount_++;
 
 	return DIENUM_CONTINUE;

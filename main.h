@@ -14,11 +14,10 @@ class Input {
 public:
   Input();
   ~Input();
-
-  IDirectInput8* pInput() const { return pInput_; }
-  void enumGamepads(); // TODO: make private
+  
   void process();
-
+  
+private:
   struct DualShock2State {
     bool triangle;
     bool circle;
@@ -37,17 +36,16 @@ public:
     bool south;
     bool west;
   };
-
+  
   DualShock2State joyState2Psx(const DIJOYSTATE& joyState);
-
-private:
   void createDummyWindow();
+  void enumGamepads();
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
   void processKeys();
-
   static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
+
   IDirectInput8* pInput_{nullptr};
   LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
   LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};

@@ -14,6 +14,8 @@ Input::Input() : hInstance_(GetModuleHandle(NULL)) {
 
   if (FAILED(result))
     throw result;
+
+  enumGamepads();
 }
 
 Input::~Input() {
@@ -56,7 +58,6 @@ void Input::releaseKey(WORD vKey, bool isExtendedKey) {
 void Input::createDummyWindow() {
   WNDCLASSEX wcex;
   wcex.cbSize = sizeof(WNDCLASSEX);
-
   wcex.style = CS_HREDRAW | CS_VREDRAW;
   wcex.lpfnWndProc = _wndProc;
   wcex.cbClsExtra = 0;
@@ -68,12 +69,10 @@ void Input::createDummyWindow() {
   wcex.lpszMenuName = NULL;
   wcex.lpszClassName = "Dummy";
   wcex.hIconSm = 0;
-
-  ATOM a = RegisterClassEx(&wcex);
-  a = a;
+  RegisterClassEx(&wcex);  
 
   hWnd_ = CreateWindow(wcex.lpszClassName, "dummy", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-    0, 100, 100, nullptr, nullptr, hInstance_, nullptr);
+      0, 100, 100, nullptr, nullptr, hInstance_, nullptr);
 
   if (!hWnd_)
     throw false;
@@ -424,9 +423,6 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 //-------------------------------------------------------------------------------------------------------------
 
 int main(const char* pArgs, int argc) {
-  Input input;
-  IDirectInput8* pInput = input.pInput();
-
-  input.enumGamepads();
+  Input input;  
   input.process();
 }

@@ -1,57 +1,9 @@
 #include <stdio.h>
+#include "main.h"
 
-#define DIRECTINPUT_VERSION 0x0800
-#include <dinput.h>
-#pragma comment (lib, "dinput8.lib")
-#pragma comment (lib, "dxguid.lib")
-
-class Input {
-public:
-  Input();
-  ~Input();
-
-  IDirectInput8* pInput() const { return pInput_; }
-  void enumGamepads(); // TODO: make private
-  void process();
-
-  struct DualShock2State {
-    bool triangle;
-    bool circle;
-    bool cross;
-    bool square;
-    bool start;
-    bool select;
-    bool l1;
-    bool l2;
-    bool r1;
-    bool r2;
-    bool leftStick;
-    bool rightStick;
-    bool north;
-    bool east;
-    bool south;
-    bool west;
-  };
-
-  DualShock2State joyState2Psx(const DIJOYSTATE& joyState);
-
-private:
-  void createDummyWindow();
-  void pressKey(WORD vKey, bool isExtendedKey = false);
-  void releaseKey(WORD vKey, bool isExtendedKey = false);
-  void processKeys();
-
-  static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
-  static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-  IDirectInput8* pInput_{nullptr};
-  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
-  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
-  int enumCount_{0};
-  HWND hWnd_{0};
-  const HINSTANCE hInstance_{0};
-  bool running_{true};
-  DualShock2State prevPsxState_{0};
-};
+//-------------------------------------------------------------------------------------------------------------
+// Input
+//-------------------------------------------------------------------------------------------------------------
 
 Input::Input() : hInstance_(GetModuleHandle(NULL)) {
   createDummyWindow();
@@ -101,38 +53,6 @@ void Input::releaseKey(WORD vKey, bool isExtendedKey) {
   SendInput(1, &ip, sizeof(INPUT));
 }
 
-LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
-  switch (message) {
-    case WM_ACTIVATE: {
-      break;
-    }
-
-    case WM_COMMAND: {
-      int wmId = LOWORD(wParam);
-
-      break;
-    }
-
-    case WM_PAINT: {
-      PAINTSTRUCT ps;
-      HDC hdc = BeginPaint(hWnd, &ps);
-      // TODO: Add any drawing code that uses hdc here...
-      EndPaint(hWnd, &ps);
-      break;
-    }
-
-    case WM_DESTROY: {
-      PostQuitMessage(0);
-      break;
-    }
-
-    default:
-      return DefWindowProc(hWnd, message, wParam, lParam);
-  }
-
-  return 0;
-}
-
 void Input::createDummyWindow() {
   WNDCLASSEX wcex;
   wcex.cbSize = sizeof(WNDCLASSEX);
@@ -167,64 +87,6 @@ void Input::enumGamepads() {
 
   HRESULT result = 0;
   result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
-}
-
-BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
-  Input* const pThis = static_cast<Input*>(pVref);
-  printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
-
-  // TODO: make configurable over ini file:
-  if (pThis->enumCount_ == 1) {
-    HRESULT result{0};
-
-    pThis->pGamepadInstance_ = pLpddi;
-    printf(" [selected]\n");
-
-    result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
-    if (FAILED(result)) {
-      printf("Failed to create gamepad!\n");
-      throw result;
-    }
-
-    printf("Gamepad created.\n");
-
-    result = pThis->pGamepadDevice_->SetCooperativeLevel(pThis->hWnd_, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
-
-    if (FAILED(result)) {
-      printf("Failed to set cooperation level!\n");
-      throw result;
-    }
-
-    printf("Cooperation level set.\n");
-
-    result = pThis->pGamepadDevice_->SetDataFormat(&c_dfDIJoystick);
-
-    if (FAILED(result)) {
-      printf("Failed to set data format!\n");
-      throw result;
-    }
-
-    printf("Data format set.\n");
-
-    DIDEVCAPS caps;
-    caps.dwSize = sizeof(DIDEVCAPS);
-    result = pThis->pGamepadDevice_->GetCapabilities(&caps);
-
-    if (FAILED(result)) {
-      printf("Failed to get gamepad capabilities!\n");
-      throw result;
-    }
-
-    printf("Gamepad capabilities:\n");
-    printf("  Axes: %d\n", caps.dwAxes);
-    printf("  Buttons: %d\n", caps.dwButtons);
-  }
-  else
-    printf("\n");
-
-  pThis->enumCount_++;
-
-  return DIENUM_CONTINUE;
 }
 
 void Input::processKeys() {
@@ -466,6 +328,100 @@ void Input::process() {
   if (hGamepadEvent)
     CloseHandle(hGamepadEvent);
 }
+
+LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+  switch (message) {
+    case WM_ACTIVATE: {
+      break;
+    }
+
+    case WM_COMMAND: {
+      int wmId = LOWORD(wParam);
+
+      break;
+    }
+
+    case WM_PAINT: {
+      PAINTSTRUCT ps;
+      HDC hdc = BeginPaint(hWnd, &ps);
+      // TODO: Add any drawing code that uses hdc here...
+      EndPaint(hWnd, &ps);
+      break;
+    }
+
+    case WM_DESTROY: {
+      PostQuitMessage(0);
+      break;
+    }
+
+    default:
+      return DefWindowProc(hWnd, message, wParam, lParam);
+  }
+
+  return 0;
+}
+
+BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
+  Input* const pThis = static_cast<Input*>(pVref);
+  printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
+
+  // TODO: make configurable over ini file:
+  if (pThis->enumCount_ == 1) {
+    HRESULT result{0};
+
+    pThis->pGamepadInstance_ = pLpddi;
+    printf(" [selected]\n");
+
+    result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
+    if (FAILED(result)) {
+      printf("Failed to create gamepad!\n");
+      throw result;
+    }
+
+    printf("Gamepad created.\n");
+
+    result = pThis->pGamepadDevice_->SetCooperativeLevel(pThis->hWnd_, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+
+    if (FAILED(result)) {
+      printf("Failed to set cooperation level!\n");
+      throw result;
+    }
+
+    printf("Cooperation level set.\n");
+
+    result = pThis->pGamepadDevice_->SetDataFormat(&c_dfDIJoystick);
+
+    if (FAILED(result)) {
+      printf("Failed to set data format!\n");
+      throw result;
+    }
+
+    printf("Data format set.\n");
+
+    DIDEVCAPS caps;
+    caps.dwSize = sizeof(DIDEVCAPS);
+    result = pThis->pGamepadDevice_->GetCapabilities(&caps);
+
+    if (FAILED(result)) {
+      printf("Failed to get gamepad capabilities!\n");
+      throw result;
+    }
+
+    printf("Gamepad capabilities:\n");
+    printf("  Axes: %d\n", caps.dwAxes);
+    printf("  Buttons: %d\n", caps.dwButtons);
+  }
+  else
+    printf("\n");
+
+  pThis->enumCount_++;
+
+  return DIENUM_CONTINUE;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+// main
+//-------------------------------------------------------------------------------------------------------------
 
 int main(const char* pArgs, int argc) {
   Input input;

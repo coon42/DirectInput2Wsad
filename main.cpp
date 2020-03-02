@@ -1,4 +1,5 @@
 #include <stdio.h>
+#include <conio.h>
 #include "main.h"
 
 //-------------------------------------------------------------------------------------------------------------
@@ -311,8 +312,12 @@ void Input::process() {
   printf("Gamepad acquired.\n");
 
   while (running_) {
-    if (WaitForSingleObject(hGamepadEvent, INFINITE) == STATUS_WAIT_0)
+    if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
       processKeys();
+
+    if (_kbhit())
+      if (_getch() == 'q')
+        break;
   }
 
   pGamepadDevice_->Unacquire();

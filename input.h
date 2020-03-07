@@ -87,23 +87,15 @@ public:
   Input();
   ~Input();
   
-  void run();
-  void processOld();
+  void run();  
 
 private:
-  void createDummyWindow();
-  void enumGamepadsOld();
+  void createDummyWindow();  
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
-  void processKeys(const DualShock2::State& psxState);
-  void processKeysOld();
-  static BOOL _enumDeviceCallbackOld(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
+  void processKeys(const DualShock2::State& psxState);  
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-  IDirectInput8* pInputOld_{nullptr};
-  LPCDIDEVICEINSTANCE pGamepadInstanceOld_{nullptr};
-  LPDIRECTINPUTDEVICE8 pGamepadDeviceOld_{nullptr};
-  int enumCountOld_{0};
+  
   HWND hWnd_{0};
   const HINSTANCE hInstance_{0};
   bool running_{true};

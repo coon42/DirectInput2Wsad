@@ -22,6 +22,93 @@ void Config::createDefaultConfig() {
 // GamePad
 //-------------------------------------------------------------------------------------------------------------
 
+GamePad::GamePad() {
+  HRESULT result = 0;
+  result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8,
+    (void**)&pInput_, NULL);
+
+  if (FAILED(result))
+    throw result;
+}
+
+GamePad::~GamePad() {
+  if (pGamepadDevice_) {
+    pGamepadDevice_->Release();
+    pGamepadDevice_ = nullptr;
+  }
+
+  if (pInput_) {
+    pInput_->Release();
+    pInput_ = nullptr;
+  }
+}
+
+void GamePad::enumGamepads(HWND hWnd) {
+  hWnd_ = hWnd;
+  enumCount_ = 0;
+
+  HRESULT result = 0;
+  result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
+}
+
+BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
+  GamePad* const pThis = static_cast<GamePad*>(pVref);
+  printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
+
+  // TODO: make configurable over ini file:
+  if (pThis->enumCount_ == 1) {
+    HRESULT result{0};
+
+    pThis->pGamepadInstance_ = pLpddi;
+    printf(" [selected]\n");
+
+    result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
+    if (FAILED(result)) {
+      printf("Failed to create gamepad!\n");
+      throw result;
+    }
+
+    printf("Gamepad created.\n");
+
+    result = pThis->pGamepadDevice_->SetCooperativeLevel(pThis->hWnd_, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+
+    if (FAILED(result)) {
+      printf("Failed to set cooperation level!\n");
+      throw result;
+    }
+
+    printf("Cooperation level set.\n");
+
+    result = pThis->pGamepadDevice_->SetDataFormat(&c_dfDIJoystick);
+
+    if (FAILED(result)) {
+      printf("Failed to set data format!\n");
+      throw result;
+    }
+
+    printf("Data format set.\n");
+
+    DIDEVCAPS caps;
+    caps.dwSize = sizeof(DIDEVCAPS);
+    result = pThis->pGamepadDevice_->GetCapabilities(&caps);
+
+    if (FAILED(result)) {
+      printf("Failed to get gamepad capabilities!\n");
+      throw result;
+    }
+
+    printf("Gamepad capabilities:\n");
+    printf("  Axes: %d\n", caps.dwAxes);
+    printf("  Buttons: %d\n", caps.dwButtons);
+  }
+  else
+    printf("\n");
+
+  pThis->enumCount_++;
+
+  return DIENUM_CONTINUE;
+}
+
 //-------------------------------------------------------------------------------------------------------------
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
@@ -91,23 +178,23 @@ Input::Input() : hInstance_(GetModuleHandle(NULL)) {
 
   HRESULT result = 0;
   result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8,
-    (void**)&pInput_, NULL);
+    (void**)&pInputOld_, NULL);
 
   if (FAILED(result))
     throw result;
 
-  enumGamepads();
+  enumGamepadsOld();
 }
 
 Input::~Input() {
-  if (pGamepadDevice_) {
-    pGamepadDevice_->Release();
-    pGamepadDevice_ = nullptr;
+  if (pGamepadDeviceOld_) {
+    pGamepadDeviceOld_->Release();
+    pGamepadDeviceOld_ = nullptr;
   }
 
-  if (pInput_) {
-    pInput_->Release();
-    pInput_ = nullptr;
+  if (pInputOld_) {
+    pInputOld_->Release();
+    pInputOld_ = nullptr;
   }
 
   DestroyWindow(hWnd_);
@@ -162,16 +249,16 @@ void Input::createDummyWindow() {
   UpdateWindow(hWnd_);
 }
 
-void Input::enumGamepads() {
-  enumCount_ = 0;
+void Input::enumGamepadsOld() {
+  enumCountOld_ = 0;
 
   HRESULT result = 0;
-  result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
+  result = pInputOld_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallbackOld, this, DIEDFL_ATTACHEDONLY);
 }
 
 void Input::processKeys() {
   DIJOYSTATE joyState;
-  pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
+  pGamepadDeviceOld_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
 
   const DualShock2::State psxState = DualShock2::joyState2Psx(joyState);
   printf("event!\n");
@@ -323,10 +410,10 @@ void Input::process() {
   if (!hGamepadEvent)
     throw "Failed to create event";
 
-  pGamepadDevice_->SetEventNotification(hGamepadEvent);
+  pGamepadDeviceOld_->SetEventNotification(hGamepadEvent);
 
   HRESULT result;
-  result = pGamepadDevice_->Acquire();
+  result = pGamepadDeviceOld_->Acquire();
 
   if (FAILED(result)) {
     printf("Failed to acquire gamepad!\n");
@@ -344,7 +431,7 @@ void Input::process() {
         break;
   }
 
-  pGamepadDevice_->Unacquire();
+  pGamepadDeviceOld_->Unacquire();
 
   if (FAILED(result)) {
     printf("Failed unacquire gamepad!\n");
@@ -389,18 +476,18 @@ LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM 
   return 0;
 }
 
-BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
+BOOL Input::_enumDeviceCallbackOld(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
   Input* const pThis = static_cast<Input*>(pVref);
-  printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
+  printf("%d: %s", pThis->enumCountOld_, pLpddi->tszInstanceName);
 
   // TODO: make configurable over ini file:
-  if (pThis->enumCount_ == 1) {
+  if (pThis->enumCountOld_ == 1) {
     HRESULT result{0};
 
-    pThis->pGamepadInstance_ = pLpddi;
+    pThis->pGamepadInstanceOld_ = pLpddi;
     printf(" [selected]\n");
 
-    result = pThis->pInput_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDevice_, NULL);
+    result = pThis->pInputOld_->CreateDevice(pLpddi->guidInstance, &pThis->pGamepadDeviceOld_, NULL);
     if (FAILED(result)) {
       printf("Failed to create gamepad!\n");
       throw result;
@@ -408,7 +495,7 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 
     printf("Gamepad created.\n");
 
-    result = pThis->pGamepadDevice_->SetCooperativeLevel(pThis->hWnd_, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
+    result = pThis->pGamepadDeviceOld_->SetCooperativeLevel(pThis->hWnd_, DISCL_BACKGROUND | DISCL_EXCLUSIVE);
 
     if (FAILED(result)) {
       printf("Failed to set cooperation level!\n");
@@ -417,7 +504,7 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 
     printf("Cooperation level set.\n");
 
-    result = pThis->pGamepadDevice_->SetDataFormat(&c_dfDIJoystick);
+    result = pThis->pGamepadDeviceOld_->SetDataFormat(&c_dfDIJoystick);
 
     if (FAILED(result)) {
       printf("Failed to set data format!\n");
@@ -428,7 +515,7 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 
     DIDEVCAPS caps;
     caps.dwSize = sizeof(DIDEVCAPS);
-    result = pThis->pGamepadDevice_->GetCapabilities(&caps);
+    result = pThis->pGamepadDeviceOld_->GetCapabilities(&caps);
 
     if (FAILED(result)) {
       printf("Failed to get gamepad capabilities!\n");
@@ -442,7 +529,7 @@ BOOL Input::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
   else
     printf("\n");
 
-  pThis->enumCount_++;
+  pThis->enumCountOld_++;
 
   return DIENUM_CONTINUE;
 }

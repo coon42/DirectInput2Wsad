@@ -24,7 +24,19 @@ private:
 //-------------------------------------------------------------------------------------------------------------
 
 class GamePad {
+public:
+  GamePad();
+  ~GamePad();
+  void enumGamepads(HWND hWnd);
 
+private:
+  static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
+
+  IDirectInput8* pInput_{nullptr};
+  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
+  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
+  int enumCount_{0};
+  HWND hWnd_{0};
 };
 
 //-------------------------------------------------------------------------------------------------------------
@@ -54,8 +66,7 @@ public:
 
   static State joyState2Psx(const DIJOYSTATE& joyState); // TODO: make private
 
-private:
-
+private:  
 };
 
 //-------------------------------------------------------------------------------------------------------------
@@ -69,19 +80,19 @@ public:
 
   void process();
 
-private:    
+private:
   void createDummyWindow();
-  void enumGamepads();
+  void enumGamepadsOld();
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
   void processKeys();
-  static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
+  static BOOL _enumDeviceCallbackOld(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-  IDirectInput8* pInput_{nullptr};
-  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
-  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
-  int enumCount_{0};
+  IDirectInput8* pInputOld_{nullptr};
+  LPCDIDEVICEINSTANCE pGamepadInstanceOld_{nullptr};
+  LPDIRECTINPUTDEVICE8 pGamepadDeviceOld_{nullptr};
+  int enumCountOld_{0};
   HWND hWnd_{0};
   const HINSTANCE hInstance_{0};
   bool running_{true};

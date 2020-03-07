@@ -53,7 +53,7 @@ class DualShock2 : public GamePad {
 public:
   DualShock2(HWND hWnd);
 
-  struct State { // TODO: make private
+  struct State {
     bool triangle;
     bool circle;
     bool cross;
@@ -73,9 +73,9 @@ public:
   };
 
   State getButtonState();
-  static State joyState2Psx(const DIJOYSTATE& joyState); // TODO: make private
 
 private:  
+  static State joyState2Psx(const DIJOYSTATE& joyState);
 };
 
 //-------------------------------------------------------------------------------------------------------------

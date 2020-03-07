@@ -156,6 +156,16 @@ DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd) {
 
 }
 
+DualShock2::State DualShock2::getButtonState() {
+  DIJOYSTATE joyState;
+  HRESULT result = pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
+
+  if (FAILED(result))
+    throw result;
+
+  return DualShock2::joyState2Psx(joyState);
+}
+
 DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
   DualShock2::State state{0};
   state.triangle = joyState.rgbButtons[0];
@@ -210,16 +220,6 @@ DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
   }
 
   return state;
-}
-
-DualShock2::State DualShock2::getButtonState() {
-  DIJOYSTATE joyState;
-  HRESULT result = pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
-
-  if (FAILED(result))
-    throw result;
-
-  return DualShock2::joyState2Psx(joyState);
 }
 
 //-------------------------------------------------------------------------------------------------------------

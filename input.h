@@ -91,6 +91,7 @@ private:
   void enumGamepadsOld();
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
+  void processKeys(const DualShock2::State& psxState);
   void processKeysOld();
   static BOOL _enumDeviceCallbackOld(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);

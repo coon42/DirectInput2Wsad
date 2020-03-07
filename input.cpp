@@ -292,6 +292,150 @@ void Input::enumGamepadsOld() {
   result = pInputOld_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallbackOld, this, DIEDFL_ATTACHEDONLY);
 }
 
+void Input::processKeys(const DualShock2::State& psxState) {
+ printf("event!\n");
+
+  // Presses
+  if (psxState.north && !prevPsxState_.north) {
+    printf("Press up");
+    pressKey(VK_UP);
+  }
+
+  if (psxState.west && !prevPsxState_.west) {
+    printf("Press left");
+    pressKey(VK_LEFT);
+  }
+
+  if (psxState.south && !prevPsxState_.south) {
+    printf("Press down");
+    pressKey(VK_DOWN);
+  }
+
+  if (psxState.east && !prevPsxState_.east) {
+    printf("Press right");
+    pressKey(VK_RIGHT);
+  }
+
+  if (psxState.triangle && !prevPsxState_.triangle) {
+    printf("Press Triangle");
+    keybd_event(VK_SPACE, 0, 0, 0);
+  }
+
+  if (psxState.circle && !prevPsxState_.circle) {
+    printf("Press Circle");
+    keybd_event(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY, 0);
+  }
+
+  if (psxState.cross && !prevPsxState_.cross) {
+    printf("Press Cross");
+    keybd_event(VK_RCONTROL, 0, 0, 0);
+  }
+
+  if (psxState.square && !prevPsxState_.square) {
+    printf("Press Square");
+    keybd_event(VK_ADD, 0, 0, 0);
+  }
+
+  if (psxState.l1 && !prevPsxState_.l1) {
+    printf("Press L1");
+    keybd_event(VK_NUMPAD0, 0x52, 0, 0);
+  }
+
+  if (psxState.r1 && !prevPsxState_.r1) {
+    printf("Press R1");
+    keybd_event(VK_NUMPAD1, 0x4F, 0, 0);
+    // keybd_event(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC), 0, 0);
+    // keybd_event(VK_SHIFT, 0, 0, 0);
+  }
+
+  if (psxState.l2 && !prevPsxState_.l2) {
+    printf("Press L2");
+    keybd_event(VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY, 0);
+  }
+
+  if (psxState.r2 && !prevPsxState_.r2) {
+    printf("Press R2");
+    keybd_event(VK_NEXT, 0x51, KEYEVENTF_EXTENDEDKEY, 0);
+  }
+
+  if (psxState.select && !prevPsxState_.select) {
+    printf("Press Select");
+    keybd_event(VK_ESCAPE, 0, 0, 0);
+  }
+
+  // Releases
+  if (!psxState.north && prevPsxState_.north) {
+    printf("Release up");
+    releaseKey(VK_UP);
+  }
+
+  if (!psxState.west && prevPsxState_.west) {
+    printf("Release left");
+    releaseKey(VK_LEFT);
+  }
+
+  if (!psxState.south && prevPsxState_.south) {
+    printf("Release down");
+    releaseKey(VK_DOWN);
+  }
+
+  if (!psxState.east && prevPsxState_.east) {
+    printf("Release right");
+    releaseKey(VK_RIGHT);
+  }
+
+  if (!psxState.triangle && prevPsxState_.triangle) {
+    printf("Release Triangle");
+    keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
+  }
+
+  if (!psxState.circle && prevPsxState_.circle) {
+    printf("Release Circle");
+    keybd_event(VK_END, 0x4f, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
+  }
+
+  if (!psxState.cross && prevPsxState_.cross) {
+    printf("Release Cross");
+    keybd_event(VK_RCONTROL, 0, KEYEVENTF_KEYUP, 0);
+  }
+
+  if (!psxState.square && prevPsxState_.square) {
+    printf("Release Square");
+    keybd_event(VK_ADD, 0, KEYEVENTF_KEYUP, 0);
+  }
+
+  if (!psxState.l1 && prevPsxState_.l1) {
+    printf("Release L1");
+    keybd_event(VK_NUMPAD0, 0x52, KEYEVENTF_KEYUP, 0);
+  }
+
+  if (!psxState.r1 && prevPsxState_.r1) {
+    printf("Release R1");
+    keybd_event(VK_NUMPAD1, 0x4F, KEYEVENTF_KEYUP, 0);
+    // keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0);
+    // keybd_event(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC), KEYEVENTF_KEYUP, 0);
+  }
+
+  if (!psxState.l2 && prevPsxState_.l2) {
+    printf("Release L2");
+    keybd_event(VK_DELETE, 0x53, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
+  }
+
+  if (!psxState.r2 && prevPsxState_.r2) {
+    printf("Release R2");
+    keybd_event(VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
+  }
+
+  if (!psxState.select && prevPsxState_.select) {
+    printf("Release Select");
+    keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, 0);
+  }
+
+  printf("\n");
+
+  prevPsxState_ = psxState;
+}
+
 void Input::processKeysOld() {
   DIJOYSTATE joyState;
   pGamepadDeviceOld_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
@@ -443,10 +587,12 @@ void Input::processKeysOld() {
 void Input::run() {
   DualShock2 gamepad(hWnd_);
   gamepad.open(1); // TODO: make configurable over ini file
-     
+  
+  DualShock2::State psxState{0};
+
   while (running_) {
     // if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
-    //   processKeys();
+    //   processKeys(psxState);
 
     if (_kbhit())
       if (_getch() == 'q')

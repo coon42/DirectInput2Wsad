@@ -50,6 +50,8 @@ void GamePad::open(HWND hWnd, int index) {
 
   HRESULT result = 0;
   result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
+
+  // TODO: what happens if gamepad was not found or could not be opened?
 }
 
 void GamePad::close() {

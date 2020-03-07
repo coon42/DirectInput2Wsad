@@ -22,7 +22,7 @@ void Config::createDefaultConfig() {
 // GamePad
 //-------------------------------------------------------------------------------------------------------------
 
-GamePad::GamePad() {
+GamePad::GamePad(HWND hWnd) : hWnd_(hWnd) {  
   HRESULT result = 0;
   result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8,
     (void**)&pInput_, NULL);
@@ -51,8 +51,7 @@ GamePad::~GamePad() {
   }
 }
 
-void GamePad::open(HWND hWnd, int index) {
-  hWnd_ = hWnd;
+void GamePad::open(int index) {  
   openIndex_ = index;
   enumCount_ = 0;
 
@@ -145,6 +144,10 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 //-------------------------------------------------------------------------------------------------------------
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
+
+DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd) {
+
+}
 
 DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
   DualShock2::State state{0};
@@ -438,8 +441,8 @@ void Input::processKeysOld() {
 }
 
 void Input::run() {
-  DualShock2 gamepad;
-  gamepad.open(hWnd_, 1); // TODO: make configurable over ini file
+  DualShock2 gamepad(hWnd_);
+  gamepad.open(1); // TODO: make configurable over ini file
      
   while (running_) {
     // if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)

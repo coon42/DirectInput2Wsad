@@ -25,21 +25,21 @@ private:
 
 class GamePad {
 public:
-  GamePad();
+  GamePad(HWND hWnd);
   ~GamePad();
-  void open(HWND hWnd, int index);
+  void open(int index);
   void close();
 
 private:
   static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
 
+  const HWND hWnd_{0};
   IDirectInput8* pInput_{nullptr};
   LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
   LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
   int openIndex_{0};
-  int enumCount_{0};
-  HWND hWnd_{0};
-  HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};
+  int enumCount_{0};  
+  HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};  
 };
 
 //-------------------------------------------------------------------------------------------------------------
@@ -48,6 +48,8 @@ private:
 
 class DualShock2 : public GamePad {
 public:
+  DualShock2(HWND hWnd);
+
   struct State { // TODO: make private
     bool triangle;
     bool circle;

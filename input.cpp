@@ -289,7 +289,7 @@ void Input::enumGamepadsOld() {
   result = pInputOld_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallbackOld, this, DIEDFL_ATTACHEDONLY);
 }
 
-void Input::processKeys() {
+void Input::processKeysOld() {
   DIJOYSTATE joyState;
   pGamepadDeviceOld_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
 
@@ -473,7 +473,7 @@ void Input::processOld() {
 
   while (running_) {
     if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
-      processKeys();
+      processKeysOld();
 
     if (_kbhit())
       if (_getch() == 'q')

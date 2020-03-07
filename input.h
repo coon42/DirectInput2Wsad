@@ -80,7 +80,7 @@ public:
   Input();
   ~Input();
 
-  void process();
+  void processOld();
 
 private:
   void createDummyWindow();

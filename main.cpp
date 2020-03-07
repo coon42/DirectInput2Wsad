@@ -10,5 +10,5 @@ int main(const char* pArgs, int argc) {
   Config config("config.ini");
 
   Input input;  
-  input.process();
+  input.processOld();
 }

@@ -410,7 +410,7 @@ void Input::processKeys() {
   prevPsxState_ = psxState;
 }
 
-void Input::process() {
+void Input::processOld() {
   HANDLE hGamepadEvent = CreateEvent(NULL, NULL, FALSE, NULL);
 
   if (!hGamepadEvent)

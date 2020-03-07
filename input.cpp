@@ -19,6 +19,70 @@ void Config::createDefaultConfig() {
 }
 
 //-------------------------------------------------------------------------------------------------------------
+// GamePad
+//-------------------------------------------------------------------------------------------------------------
+
+//-------------------------------------------------------------------------------------------------------------
+// DualShock2
+//-------------------------------------------------------------------------------------------------------------
+
+DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
+  DualShock2::State state{0};
+  state.triangle = joyState.rgbButtons[0];
+  state.circle = joyState.rgbButtons[1];
+  state.cross = joyState.rgbButtons[2];
+  state.square = joyState.rgbButtons[3];
+  state.start = joyState.rgbButtons[9];
+  state.select = joyState.rgbButtons[8];
+  state.l1 = joyState.rgbButtons[6];
+  state.l2 = joyState.rgbButtons[4];
+  state.r1 = joyState.rgbButtons[7];
+  state.r2 = joyState.rgbButtons[5];
+  state.leftStick = joyState.rgbButtons[10];
+  state.rightStick = joyState.rgbButtons[11];
+
+  switch (joyState.rgdwPOV[0]) {
+    case 0:
+      state.north = true;
+      break;
+
+    case 4500:
+      state.north = true;
+      state.east = true;
+      break;
+
+    case 9000:
+      state.east = true;
+      break;
+
+    case 13500:
+      state.east = true;
+      state.south = true;
+      break;
+
+    case 18000:
+      state.south = true;
+      break;
+
+    case 22500:
+      state.south = true;
+      state.west = true;
+      break;
+
+    case 27000:
+      state.west = true;
+      break;
+
+    case 31500:
+      state.west = true;
+      state.north = true;
+      break;
+  }
+
+  return state;
+}
+
+//-------------------------------------------------------------------------------------------------------------
 // Input
 //-------------------------------------------------------------------------------------------------------------
 
@@ -109,7 +173,7 @@ void Input::processKeys() {
   DIJOYSTATE joyState;
   pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
 
-  const DualShock2State psxState = joyState2Psx(joyState);
+  const DualShock2::State psxState = DualShock2::joyState2Psx(joyState);
   printf("event!\n");
 
   // Presses
@@ -251,62 +315,6 @@ void Input::processKeys() {
   printf("\n");
 
   prevPsxState_ = psxState;
-}
-
-Input::DualShock2State Input::joyState2Psx(const DIJOYSTATE& joyState) {
-  Input::DualShock2State state{0};
-  state.triangle = joyState.rgbButtons[0];
-  state.circle = joyState.rgbButtons[1];
-  state.cross = joyState.rgbButtons[2];
-  state.square = joyState.rgbButtons[3];
-  state.start = joyState.rgbButtons[9];
-  state.select = joyState.rgbButtons[8];
-  state.l1 = joyState.rgbButtons[6];
-  state.l2 = joyState.rgbButtons[4];
-  state.r1 = joyState.rgbButtons[7];
-  state.r2 = joyState.rgbButtons[5];
-  state.leftStick = joyState.rgbButtons[10];
-  state.rightStick = joyState.rgbButtons[11];
-
-  switch (joyState.rgdwPOV[0]) {
-    case 0:
-      state.north = true;
-      break;
-
-    case 4500:
-      state.north = true;
-      state.east = true;
-      break;
-
-    case 9000:
-      state.east = true;
-      break;
-
-    case 13500:
-      state.east = true;
-      state.south = true;
-      break;
-
-    case 18000:
-      state.south = true;
-      break;
-
-    case 22500:
-      state.south = true;
-      state.west = true;
-      break;
-
-    case 27000:
-      state.west = true;
-      break;
-
-    case 31500:
-      state.west = true;
-      state.north = true;
-      break;
-  }
-
-  return state;
 }
 
 void Input::process() {

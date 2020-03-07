@@ -20,18 +20,20 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------------------
-// Input
+// GamePad
 //-------------------------------------------------------------------------------------------------------------
 
-class Input {
+class GamePad {
+
+};
+
+//-------------------------------------------------------------------------------------------------------------
+// DualShock2
+//-------------------------------------------------------------------------------------------------------------
+
+class DualShock2 : public GamePad {
 public:
-  Input();
-  ~Input();
-
-  void process();
-
-private:
-  struct DualShock2State {
+  struct State { // TODO: make private
     bool triangle;
     bool circle;
     bool cross;
@@ -50,7 +52,24 @@ private:
     bool west;
   };
 
-  DualShock2State joyState2Psx(const DIJOYSTATE& joyState);
+  static State joyState2Psx(const DIJOYSTATE& joyState); // TODO: make private
+
+private:
+
+};
+
+//-------------------------------------------------------------------------------------------------------------
+// Input
+//-------------------------------------------------------------------------------------------------------------
+
+class Input {
+public:
+  Input();
+  ~Input();
+
+  void process();
+
+private:    
   void createDummyWindow();
   void enumGamepads();
   void pressKey(WORD vKey, bool isExtendedKey = false);
@@ -66,7 +85,7 @@ private:
   HWND hWnd_{0};
   const HINSTANCE hInstance_{0};
   bool running_{true};
-  DualShock2State prevPsxState_{0};
+  DualShock2::State prevPsxState_{0};
 };
 
 #endif // INPUT_H

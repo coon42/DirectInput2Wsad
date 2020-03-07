@@ -284,7 +284,7 @@ void Input::createDummyWindow() {
 }
 
 void Input::processButtons(const DualShock2::State& psxState) {
- printf("event!\n");
+  printf("event!\n");
 
   // Presses
   if (psxState.north && !prevPsxState_.north) {

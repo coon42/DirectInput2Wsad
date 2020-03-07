@@ -410,6 +410,46 @@ void Input::processKeys() {
   prevPsxState_ = psxState;
 }
 
+void Input::run() {
+  HANDLE hGamepadEvent = CreateEvent(NULL, NULL, FALSE, NULL);
+
+  if (!hGamepadEvent)
+    throw "Failed to create event";
+
+  pGamepadDeviceOld_->SetEventNotification(hGamepadEvent);
+
+  HRESULT result;
+  result = pGamepadDeviceOld_->Acquire();
+
+  if (FAILED(result)) {
+    printf("Failed to acquire gamepad!\n");
+    throw result;
+  }
+
+  printf("Gamepad acquired.\n");
+
+  while (running_) {
+    if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
+      processKeys();
+
+    if (_kbhit())
+      if (_getch() == 'q')
+        break;
+  }
+
+  pGamepadDeviceOld_->Unacquire();
+
+  if (FAILED(result)) {
+    printf("Failed unacquire gamepad!\n");
+    throw result;
+  }
+
+  printf("Gamepad unacquired.\n");
+
+  if (hGamepadEvent)
+    CloseHandle(hGamepadEvent);
+}
+
 void Input::processOld() {
   HANDLE hGamepadEvent = CreateEvent(NULL, NULL, FALSE, NULL);
 

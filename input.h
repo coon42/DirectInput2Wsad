@@ -79,7 +79,8 @@ class Input {
 public:
   Input();
   ~Input();
-
+  
+  void run();
   void processOld();
 
 private:

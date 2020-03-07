@@ -93,7 +93,7 @@ private:
   void createDummyWindow();  
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
-  void processKeys(const DualShock2::State& psxState);  
+  void processButtons(const DualShock2::State& psxState);  
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
   
   HWND hWnd_{0};

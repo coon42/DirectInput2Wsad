@@ -283,7 +283,7 @@ void Input::createDummyWindow() {
   UpdateWindow(hWnd_);
 }
 
-void Input::processKeys(const DualShock2::State& psxState) {
+void Input::processButtons(const DualShock2::State& psxState) {
  printf("event!\n");
 
   // Presses
@@ -434,7 +434,7 @@ void Input::run() {
   while (running_) {
     if (gamepad.waitForButtonEvent(250)) {
       DualShock2::State psxState = gamepad.getButtonState();
-      processKeys(psxState);
+      processButtons(psxState);
     }
     
     if (_kbhit())

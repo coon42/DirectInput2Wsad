@@ -27,7 +27,8 @@ class GamePad {
 public:
   GamePad();
   ~GamePad();
-  void enumGamepads(HWND hWnd);
+  void open(HWND hWnd, int index);
+  void close();
 
 private:
   static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
@@ -35,6 +36,7 @@ private:
   IDirectInput8* pInput_{nullptr};
   LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
   LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
+  int openIndex_{0};
   int enumCount_{0};
   HWND hWnd_{0};
 };

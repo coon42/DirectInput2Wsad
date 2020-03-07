@@ -43,20 +43,24 @@ GamePad::~GamePad() {
   }
 }
 
-void GamePad::enumGamepads(HWND hWnd) {
+void GamePad::open(HWND hWnd, int index) {
   hWnd_ = hWnd;
+  openIndex_ = index; // TODO: make configurable over ini file:
   enumCount_ = 0;
 
   HRESULT result = 0;
   result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
 }
 
+void GamePad::close() {
+
+}
+
 BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
   GamePad* const pThis = static_cast<GamePad*>(pVref);
   printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
-
-  // TODO: make configurable over ini file:
-  if (pThis->enumCount_ == 1) {
+  
+  if (pThis->enumCount_ == pThis->openIndex_) {
     HRESULT result{0};
 
     pThis->pGamepadInstance_ = pLpddi;

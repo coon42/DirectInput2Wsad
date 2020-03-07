@@ -26,9 +26,10 @@ private:
 class GamePad {
 public:
   GamePad(HWND hWnd);
-  ~GamePad();
+  ~GamePad();  
   void open(int index);
   void close();
+  bool waitForButtonEvent(int timeoutMs);
 
 private:
   static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);

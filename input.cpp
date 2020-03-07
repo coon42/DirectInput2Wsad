@@ -81,6 +81,13 @@ void GamePad::close() {
   printf("Gamepad unacquired.\n");
 }
 
+bool GamePad::waitForButtonEvent(int timeoutMs) {
+  if (WaitForSingleObject(hButtonEvent_, timeoutMs) != STATUS_WAIT_0)
+    return false;
+  
+  return true;
+}
+
 BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
   GamePad* const pThis = static_cast<GamePad*>(pVref);
   printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
@@ -591,8 +598,11 @@ void Input::run() {
   DualShock2::State psxState{0};
 
   while (running_) {
-    // if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
-    //   processKeys(psxState);
+    if (gamepad.waitForButtonEvent(250)) {
+      // TODO: get button state
+      processKeys(psxState);
+    }
+    
 
     if (_kbhit())
       if (_getch() == 'q')

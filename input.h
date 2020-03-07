@@ -31,13 +31,15 @@ public:
   void close();
   bool waitForButtonEvent(int timeoutMs);
 
+protected:
+  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr}; // CHECKME: make private?
+
 private:
   static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
 
   const HWND hWnd_{0};
   IDirectInput8* pInput_{nullptr};
-  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
-  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
+  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};  
   int openIndex_{0};
   int enumCount_{0};  
   HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};  
@@ -70,6 +72,7 @@ public:
     bool west;
   };
 
+  State getButtonState();
   static State joyState2Psx(const DIJOYSTATE& joyState); // TODO: make private
 
 private:  

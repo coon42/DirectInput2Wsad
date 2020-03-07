@@ -212,6 +212,16 @@ DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
   return state;
 }
 
+DualShock2::State DualShock2::getButtonState() {
+  DIJOYSTATE joyState;
+  HRESULT result = pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
+
+  if (FAILED(result))
+    throw result;
+
+  return DualShock2::joyState2Psx(joyState);
+}
+
 //-------------------------------------------------------------------------------------------------------------
 // Input
 //-------------------------------------------------------------------------------------------------------------
@@ -594,16 +604,13 @@ void Input::processKeysOld() {
 void Input::run() {
   DualShock2 gamepad(hWnd_);
   gamepad.open(1); // TODO: make configurable over ini file
-  
-  DualShock2::State psxState{0};
-
+    
   while (running_) {
     if (gamepad.waitForButtonEvent(250)) {
-      // TODO: get button state
+      DualShock2::State psxState = gamepad.getButtonState();
       processKeys(psxState);
     }
     
-
     if (_kbhit())
       if (_getch() == 'q')
         break;

@@ -29,9 +29,17 @@ GamePad::GamePad() {
 
   if (FAILED(result))
     throw result;
+
+  hButtonEvent_ = CreateEvent(NULL, NULL, FALSE, NULL);
+
+  if (!hButtonEvent_)
+    throw "Failed to create event";  
 }
 
 GamePad::~GamePad() {
+  if (hButtonEvent_)
+    CloseHandle(hButtonEvent_);
+
   if (pGamepadDevice_) {
     pGamepadDevice_->Release();
     pGamepadDevice_ = nullptr;
@@ -45,17 +53,33 @@ GamePad::~GamePad() {
 
 void GamePad::open(HWND hWnd, int index) {
   hWnd_ = hWnd;
-  openIndex_ = index; // TODO: make configurable over ini file:
+  openIndex_ = index;
   enumCount_ = 0;
 
   HRESULT result = 0;
   result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
 
   // TODO: what happens if gamepad was not found or could not be opened?
+
+  result = pGamepadDevice_->Acquire();
+
+  if (FAILED(result)) {
+    printf("Failed to acquire gamepad!\n");
+    throw result;
+  }
+
+  printf("Gamepad acquired.\n");
 }
 
-void GamePad::close() {
+void GamePad::close() {  
+  HRESULT result = pGamepadDevice_->Unacquire();
 
+  if (FAILED(result)) {
+    printf("Failed unacquire gamepad!\n");
+    throw result;
+  }
+
+  printf("Gamepad unacquired.\n");
 }
 
 BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
@@ -93,6 +117,9 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
     }
 
     printf("Data format set.\n");
+
+    pThis->pGamepadDevice_->SetEventNotification(pThis->hButtonEvent_);
+    printf("Notification event set.\n");
 
     DIDEVCAPS caps;
     caps.dwSize = sizeof(DIDEVCAPS);
@@ -411,43 +438,19 @@ void Input::processKeys() {
 }
 
 void Input::run() {
-  HANDLE hGamepadEvent = CreateEvent(NULL, NULL, FALSE, NULL);
-
-  if (!hGamepadEvent)
-    throw "Failed to create event";
-
-  pGamepadDeviceOld_->SetEventNotification(hGamepadEvent);
-
-  HRESULT result;
-  result = pGamepadDeviceOld_->Acquire();
-
-  if (FAILED(result)) {
-    printf("Failed to acquire gamepad!\n");
-    throw result;
-  }
-
-  printf("Gamepad acquired.\n");
-
+  DualShock2 gamepad;
+  gamepad.open(hWnd_, 1); // TODO: make configurable over ini file
+     
   while (running_) {
-    if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
-      processKeys();
+    // if (WaitForSingleObject(hGamepadEvent, 250) == STATUS_WAIT_0)
+    //   processKeys();
 
     if (_kbhit())
       if (_getch() == 'q')
         break;
   }
 
-  pGamepadDeviceOld_->Unacquire();
-
-  if (FAILED(result)) {
-    printf("Failed unacquire gamepad!\n");
-    throw result;
-  }
-
-  printf("Gamepad unacquired.\n");
-
-  if (hGamepadEvent)
-    CloseHandle(hGamepadEvent);
+  gamepad.close();  
 }
 
 void Input::processOld() {

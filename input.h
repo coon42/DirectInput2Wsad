@@ -39,6 +39,7 @@ private:
   int openIndex_{0};
   int enumCount_{0};
   HWND hWnd_{0};
+  HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};
 };
 
 //-------------------------------------------------------------------------------------------------------------

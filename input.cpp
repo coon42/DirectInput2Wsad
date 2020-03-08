@@ -296,6 +296,11 @@ void Input::processButtons(const DualShock2::State& psxState) {
       printf("Did not press select to avoid windows key shortcut!");    
   }
 
+  if (psxState.start && !prevPsxState_.start) {
+    printf("Press Start");
+    pressKey(VK_SUBTRACT, false);
+  }
+
   if (psxState.north && !prevPsxState_.north) {
     printf("Press up");
     pressKey(VK_UP);
@@ -347,18 +352,28 @@ void Input::processButtons(const DualShock2::State& psxState) {
     // keybd_event(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC), 0, 0);
     // keybd_event(VK_SHIFT, 0, 0, 0);
   }
-
+    
   if (psxState.l2 && !prevPsxState_.l2) {
     printf("Press L2");
-    keybd_event(VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY, 0);
+    keybd_event(VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY, 0);   
   }
-
+   
   if (psxState.r2 && !prevPsxState_.r2) {
     printf("Press R2");
     keybd_event(VK_NEXT, 0x51, KEYEVENTF_EXTENDEDKEY, 0);
   }  
 
   // Releases
+  if (!psxState.select && prevPsxState_.select) {
+    printf("Release Select");
+    keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, 0);
+  }
+
+  if (!psxState.start && prevPsxState_.start) {
+    printf("Release Start");
+    releaseKey(VK_SUBTRACT, false);
+  }
+
   if (!psxState.north && prevPsxState_.north) {
     printf("Release up");
     releaseKey(VK_UP);
@@ -413,19 +428,14 @@ void Input::processButtons(const DualShock2::State& psxState) {
 
   if (!psxState.l2 && prevPsxState_.l2) {
     printf("Release L2");
-    keybd_event(VK_DELETE, 0x53, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
+    keybd_event(VK_DELETE, 0x53, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);    
   }
 
   if (!psxState.r2 && prevPsxState_.r2) {
     printf("Release R2");
     keybd_event(VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
   }
-
-  if (!psxState.select && prevPsxState_.select) {
-    printf("Release Select");
-    keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, 0);
-  }
-
+  
   printf("\n");
 
   prevPsxState_ = psxState;

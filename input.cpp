@@ -33,7 +33,7 @@ GamePad::GamePad(HWND hWnd) : hWnd_(hWnd) {
   hButtonEvent_ = CreateEvent(NULL, NULL, FALSE, NULL);
 
   if (!hButtonEvent_)
-    throw "Failed to create event";  
+    throw "Failed to create event";
 }
 
 GamePad::~GamePad() {
@@ -287,6 +287,15 @@ void Input::processButtons(const DualShock2::State& psxState) {
   printf("event!\n");
 
   // Presses
+  if (psxState.select && !prevPsxState_.select) {
+    if (!prevPsxState_.cross) {
+      printf("Press Select");
+      keybd_event(VK_ESCAPE, 0, 0, 0);
+    }
+    else
+      printf("Did not press select to avoid windows key shortcut!");    
+  }
+
   if (psxState.north && !prevPsxState_.north) {
     printf("Press up");
     pressKey(VK_UP);
@@ -347,12 +356,7 @@ void Input::processButtons(const DualShock2::State& psxState) {
   if (psxState.r2 && !prevPsxState_.r2) {
     printf("Press R2");
     keybd_event(VK_NEXT, 0x51, KEYEVENTF_EXTENDEDKEY, 0);
-  }
-
-  if (psxState.select && !prevPsxState_.select) {
-    printf("Press Select");
-    keybd_event(VK_ESCAPE, 0, 0, 0);
-  }
+  }  
 
   // Releases
   if (!psxState.north && prevPsxState_.north) {

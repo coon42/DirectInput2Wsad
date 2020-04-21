@@ -51,14 +51,17 @@ GamePad::~GamePad() {
   }
 }
 
-void GamePad::open(int index) {  
+void GamePad::open(int index) {
   openIndex_ = index;
   enumCount_ = 0;
-
+  
   HRESULT result = 0;
   result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
-
-  // TODO: what happens if gamepad was not found or could not be opened?
+  
+  if (!pGamepadDevice_) {    
+    printf("No gamepad found!\n");
+    throw S_FALSE;
+  }
 
   result = pGamepadDevice_->Acquire();
 

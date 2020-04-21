@@ -282,7 +282,7 @@ void Input::createDummyWindow() {
   if (!hWnd_)
     throw false;
 
-  ShowWindow(hWnd_, SW_SHOW);
+  ShowWindow(hWnd_, SW_HIDE);
   UpdateWindow(hWnd_);
 }
 

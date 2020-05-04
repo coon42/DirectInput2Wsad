@@ -22,7 +22,7 @@ void Config::createDefaultConfig() {
 // GamePad
 //-------------------------------------------------------------------------------------------------------------
 
-GamePad::GamePad(HWND hWnd) : hWnd_(hWnd) {  
+GamePad::GamePad(HWND hWnd) : hWnd_(hWnd) {
   HRESULT result = 0;
   result = DirectInput8Create(GetModuleHandle(NULL), DIRECTINPUT_VERSION, IID_IDirectInput8,
     (void**)&pInput_, NULL);
@@ -54,11 +54,11 @@ GamePad::~GamePad() {
 void GamePad::open(int index) {
   openIndex_ = index;
   enumCount_ = 0;
-  
+
   HRESULT result = 0;
   result = pInput_->EnumDevices(DI8DEVCLASS_GAMECTRL, _enumDeviceCallback, this, DIEDFL_ATTACHEDONLY);
-  
-  if (!pGamepadDevice_) {    
+
+  if (!pGamepadDevice_) {
     printf("No gamepad found!\n");
     throw S_FALSE;
   }
@@ -73,7 +73,7 @@ void GamePad::open(int index) {
   printf("Gamepad acquired.\n");
 }
 
-void GamePad::close() {  
+void GamePad::close() {
   HRESULT result = pGamepadDevice_->Unacquire();
 
   if (FAILED(result)) {
@@ -87,14 +87,14 @@ void GamePad::close() {
 bool GamePad::waitForButtonEvent(int timeoutMs) {
   if (WaitForSingleObject(hButtonEvent_, timeoutMs) != STATUS_WAIT_0)
     return false;
-  
+
   return true;
 }
 
 BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
   GamePad* const pThis = static_cast<GamePad*>(pVref);
   printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
-  
+
   if (pThis->enumCount_ == pThis->openIndex_) {
     HRESULT result{0};
 
@@ -230,10 +230,10 @@ DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
 //-------------------------------------------------------------------------------------------------------------
 
 Input::Input() : hInstance_(GetModuleHandle(NULL)) {
-  createDummyWindow();  
+  createDummyWindow();
 }
 
-Input::~Input() {  
+Input::~Input() {
   DestroyWindow(hWnd_);
   hWnd_ = 0;
 }
@@ -274,7 +274,7 @@ void Input::createDummyWindow() {
   wcex.lpszMenuName = NULL;
   wcex.lpszClassName = "Dummy";
   wcex.hIconSm = 0;
-  RegisterClassEx(&wcex);  
+  RegisterClassEx(&wcex);
 
   hWnd_ = CreateWindow(wcex.lpszClassName, "dummy", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
       0, 100, 100, nullptr, nullptr, hInstance_, nullptr);
@@ -296,7 +296,7 @@ void Input::processButtons(const DualShock2::State& psxState) {
       keybd_event(VK_ESCAPE, 0, 0, 0);
     }
     else
-      printf("Did not press select to avoid windows key shortcut!");    
+      printf("Did not press select to avoid windows key shortcut!");
   }
 
   if (psxState.start && !prevPsxState_.start) {
@@ -355,16 +355,16 @@ void Input::processButtons(const DualShock2::State& psxState) {
     // keybd_event(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC), 0, 0);
     // keybd_event(VK_SHIFT, 0, 0, 0);
   }
-    
+
   if (psxState.l2 && !prevPsxState_.l2) {
     printf("Press L2");
-    keybd_event(VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY, 0);   
+    keybd_event(VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY, 0);
   }
-   
+
   if (psxState.r2 && !prevPsxState_.r2) {
     printf("Press R2");
     keybd_event(VK_NEXT, 0x51, KEYEVENTF_EXTENDEDKEY, 0);
-  }  
+  }
 
   // Releases
   if (!psxState.select && prevPsxState_.select) {
@@ -431,14 +431,14 @@ void Input::processButtons(const DualShock2::State& psxState) {
 
   if (!psxState.l2 && prevPsxState_.l2) {
     printf("Release L2");
-    keybd_event(VK_DELETE, 0x53, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);    
+    keybd_event(VK_DELETE, 0x53, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
   }
 
   if (!psxState.r2 && prevPsxState_.r2) {
     printf("Release R2");
     keybd_event(VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
   }
-  
+
   printf("\n");
 
   prevPsxState_ = psxState;
@@ -447,19 +447,19 @@ void Input::processButtons(const DualShock2::State& psxState) {
 void Input::run() {
   DualShock2 gamepad(hWnd_);
   gamepad.open(1); // TODO: make configurable over ini file
-    
+
   while (running_) {
     if (gamepad.waitForButtonEvent(250)) {
       DualShock2::State psxState = gamepad.getButtonState();
       processButtons(psxState);
     }
-    
+
     if (_kbhit())
       if (_getch() == 'q')
         break;
   }
 
-  gamepad.close();  
+  gamepad.close();
 }
 
 LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {

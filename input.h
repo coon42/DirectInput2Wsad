@@ -26,7 +26,7 @@ private:
 class GamePad {
 public:
   GamePad(HWND hWnd);
-  ~GamePad();  
+  ~GamePad();
   void open(int index);
   void close();
   bool waitForButtonEvent(int timeoutMs);
@@ -39,10 +39,10 @@ private:
 
   const HWND hWnd_{0};
   IDirectInput8* pInput_{nullptr};
-  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};  
+  LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
   int openIndex_{0};
-  int enumCount_{0};  
-  HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};  
+  int enumCount_{0};
+  HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};
 };
 
 //-------------------------------------------------------------------------------------------------------------
@@ -74,7 +74,7 @@ public:
 
   State getButtonState();
 
-private:  
+private:
   static State joyState2Psx(const DIJOYSTATE& joyState);
 };
 
@@ -86,16 +86,16 @@ class Input {
 public:
   Input();
   ~Input();
-  
-  void run();  
+
+  void run();
 
 private:
-  void createDummyWindow();  
+  void createDummyWindow();
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
-  void processButtons(const DualShock2::State& psxState);  
+  void processButtons(const DualShock2::State& psxState);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-  
+
   HWND hWnd_{0};
   const HINSTANCE hInstance_{0};
   bool running_{true};

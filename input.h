@@ -46,12 +46,29 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------------------
+// Button
+//-------------------------------------------------------------------------------------------------------------
+
+class Button {
+public:
+  Button() = default;
+  Button(BYTE vKey) : vKey_(vKey) {}
+  void press()                    { keybd_event(vKey_, 0, 0, 0); }
+  void release()                  { keybd_event(vKey_, 0, KEYEVENTF_KEYUP, 0); }
+
+private:
+  BYTE vKey_{0};
+};
+
+//-------------------------------------------------------------------------------------------------------------
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
 
 class DualShock2 : public GamePad {
 public:
   DualShock2(HWND hWnd);
+
+  Button square;
 
   struct State {
     bool triangle;
@@ -93,7 +110,7 @@ private:
   void createDummyWindow();
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
-  void processButtons(const DualShock2::State& psxState);
+  void processButtons(DualShock2* pDualShock2, const DualShock2::State& psxState);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
   HWND hWnd_{0};

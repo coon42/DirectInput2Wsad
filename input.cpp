@@ -155,7 +155,7 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
 
-DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd) {
+DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), square(VK_MENU) {
 
 }
 
@@ -286,7 +286,7 @@ void Input::createDummyWindow() {
   UpdateWindow(hWnd_);
 }
 
-void Input::processButtons(const DualShock2::State& psxState) {
+void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psxState) {
   printf("event!\n");
 
   // Presses
@@ -341,7 +341,7 @@ void Input::processButtons(const DualShock2::State& psxState) {
 
   if (psxState.square && !prevPsxState_.square) {
     printf("Press Square");
-    keybd_event(VK_MENU, 0, 0, 0);
+    pDualShock2->square.press();
   }
 
   if (psxState.l1 && !prevPsxState_.l1) {
@@ -416,7 +416,7 @@ void Input::processButtons(const DualShock2::State& psxState) {
 
   if (!psxState.square && prevPsxState_.square) {
     printf("Release Square");
-    keybd_event(VK_MENU, 0, KEYEVENTF_KEYUP, 0);
+    pDualShock2->square.release();
   }
 
   if (!psxState.l1 && prevPsxState_.l1) {
@@ -455,7 +455,7 @@ void Input::run() {
   while (running_) {
     if (gamepad.waitForButtonEvent(250)) {
       DualShock2::State psxState = gamepad.getButtonState();
-      processButtons(psxState);
+      processButtons(&gamepad, psxState);
     }
 
     if (_kbhit())

@@ -156,7 +156,9 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 //-------------------------------------------------------------------------------------------------------------
 
 DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
-    circle(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY), cross(VK_RCONTROL), square(VK_MENU) {
+    circle(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY), cross(VK_RCONTROL), square(VK_MENU),
+    start(188), // ,
+    select(VK_ESCAPE) {
 
 }
 
@@ -294,7 +296,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
   if (psxState.select && !prevPsxState_.select) {
     if (!prevPsxState_.cross) {
       printf("Press Select");
-      keybd_event(VK_ESCAPE, 0, 0, 0);
+      pDualShock2->select.press();
     }
     else
       printf("Did not press select to avoid windows key shortcut!");
@@ -302,7 +304,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (psxState.start && !prevPsxState_.start) {
     printf("Press Start");
-    pressKey(188, false); // ,
+    pDualShock2->start.press();
   }
 
   if (psxState.north && !prevPsxState_.north) {
@@ -372,12 +374,12 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
   // Releases
   if (!psxState.select && prevPsxState_.select) {
     printf("Release Select");
-    keybd_event(VK_ESCAPE, 0, KEYEVENTF_KEYUP, 0);
+    pDualShock2->select.release();
   }
 
   if (!psxState.start && prevPsxState_.start) {
     printf("Release Start");
-    releaseKey(188, false); // ,
+    pDualShock2->start.release();
   }
 
   if (!psxState.north && prevPsxState_.north) {

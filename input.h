@@ -53,10 +53,20 @@ class Button {
 public:
   Button() = default;
   Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey) {}
-  void press()                    { keybd_event(vKey_, bScan_, dwFlags_, 0); }
-  void release()                  { keybd_event(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_, 0); }
+  bool isPressed() const { return isPressed_; }
+
+  void press() {
+    keybd_event(vKey_, bScan_, dwFlags_, 0);
+    isPressed_ = true;
+  }
+
+  void release() {
+    keybd_event(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_, 0);
+    isPressed_ = false;
+  }
 
 private:
+  bool isPressed_{false};
   BYTE vKey_{0};
   BYTE bScan_{0};
   DWORD dwFlags_{0};

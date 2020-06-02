@@ -160,9 +160,9 @@ DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
     start(188), // ,
     select(VK_ESCAPE),
     l1(VK_NUMPAD0, 0x52),
-    l2(190), // ,
-    r1(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC)),
-    r2(189), // -
+    l2(190), // , | VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY
+    r1(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC)), // VK_NUMPAD1, 0x4F | VK_SHIFT
+    r2(189), // - | VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY
     north(VK_UP),
     east(VK_RIGHT),
     south(VK_DOWN),
@@ -362,21 +362,17 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (psxState.r1 && !prevPsxState_.r1) {
     printf("Press R1");
-    // keybd_event(VK_NUMPAD1, 0x4F, 0, 0);
-    // keybd_event(VK_SHIFT, 0, 0, 0);
     pDualShock2->r1.press();
   }
 
   if (psxState.l2 && !prevPsxState_.l2) {
     printf("Press L2");
     pDualShock2->l2.press();
-    // keybd_event(VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY, 0);
   }
 
   if (psxState.r2 && !prevPsxState_.r2) {
     printf("Press R2");
     pDualShock2->r2.press();
-    // keybd_event(VK_NEXT, 0x51, KEYEVENTF_EXTENDEDKEY, 0);
   }
 
   // Releases
@@ -437,21 +433,17 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (!psxState.r1 && prevPsxState_.r1) {
     printf("Release R1");
-    // keybd_event(VK_NUMPAD1, 0x4F, KEYEVENTF_KEYUP, 0);
-    // keybd_event(VK_SHIFT, 0, KEYEVENTF_KEYUP, 0);
     pDualShock2->r1.release();
   }
 
   if (!psxState.l2 && prevPsxState_.l2) {
     printf("Release L2");
     pDualShock2->l2.release();
-    // keybd_event(VK_DELETE, 0x53, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
   }
 
   if (!psxState.r2 && prevPsxState_.r2) {
     printf("Release R2");
     pDualShock2->r2.release();
-    // keybd_event(VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
   }
 
   printf("\n");

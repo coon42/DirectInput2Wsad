@@ -72,7 +72,7 @@ public:
 
   Button triangle;
   Button circle;
-  Button cross;      // TODO: implement
+  Button cross;
   Button square;
   Button start;      // TODO: implement
   Button select;     // TODO: implement

@@ -156,7 +156,7 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 //-------------------------------------------------------------------------------------------------------------
 
 DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
-    circle(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY), square(VK_MENU) {
+    circle(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY), cross(VK_RCONTROL), square(VK_MENU) {
 
 }
 
@@ -337,7 +337,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (psxState.cross && !prevPsxState_.cross) {
     printf("Press Cross");
-    keybd_event(VK_RCONTROL, 0, 0, 0);
+    pDualShock2->cross.press();
   }
 
   if (psxState.square && !prevPsxState_.square) {
@@ -412,7 +412,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (!psxState.cross && prevPsxState_.cross) {
     printf("Release Cross");
-    keybd_event(VK_RCONTROL, 0, KEYEVENTF_KEYUP, 0);
+    pDualShock2->cross.release();
   }
 
   if (!psxState.square && prevPsxState_.square) {

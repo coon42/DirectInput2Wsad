@@ -90,12 +90,12 @@ public:
   Button l2;
   Button r1;
   Button r2;
-  Button leftStick;  // TODO: implement
-  Button rightStick; // TODO: implement
-  Button north;      // TODO: implement
-  Button east;       // TODO: implement
-  Button south;      // TODO: implement
-  Button west;       // TODO: implement
+  Button leftStick;
+  Button rightStick;
+  Button north;
+  Button east;
+  Button south;
+  Button west;
 
   // TODO: make private
   struct State {

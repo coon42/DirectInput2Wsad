@@ -162,8 +162,11 @@ DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
     l1(VK_NUMPAD0, 0x52),
     l2(190), // ,
     r1(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC)),
-    r2(189) // -
-{
+    r2(189), // -
+    north(VK_UP),
+    east(VK_RIGHT),
+    south(VK_DOWN),
+    west(VK_LEFT) {
 
 }
 
@@ -314,22 +317,22 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (psxState.north && !prevPsxState_.north) {
     printf("Press up");
-    pressKey(VK_UP);
+    pDualShock2->north.press();
   }
 
   if (psxState.west && !prevPsxState_.west) {
     printf("Press left");
-    pressKey(VK_LEFT);
+    pDualShock2->west.press();
   }
 
   if (psxState.south && !prevPsxState_.south) {
     printf("Press down");
-    pressKey(VK_DOWN);
+    pDualShock2->south.press();
   }
 
   if (psxState.east && !prevPsxState_.east) {
     printf("Press right");
-    pressKey(VK_RIGHT);
+    pDualShock2->east.press();
   }
 
   if (psxState.triangle && !prevPsxState_.triangle) {
@@ -389,22 +392,22 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (!psxState.north && prevPsxState_.north) {
     printf("Release up");
-    releaseKey(VK_UP);
+    pDualShock2->north.release();
   }
 
   if (!psxState.west && prevPsxState_.west) {
     printf("Release left");
-    releaseKey(VK_LEFT);
+    pDualShock2->west.release();
   }
 
   if (!psxState.south && prevPsxState_.south) {
     printf("Release down");
-    releaseKey(VK_DOWN);
+    pDualShock2->south.release();
   }
 
   if (!psxState.east && prevPsxState_.east) {
     printf("Release right");
-    releaseKey(VK_RIGHT);
+    pDualShock2->east.release();
   }
 
   if (!psxState.triangle && prevPsxState_.triangle) {

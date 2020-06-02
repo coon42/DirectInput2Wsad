@@ -155,7 +155,7 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
 
-DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), square(VK_MENU) {
+DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE), square(VK_MENU) {
 
 }
 
@@ -326,7 +326,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (psxState.triangle && !prevPsxState_.triangle) {
     printf("Press Triangle");
-    keybd_event(VK_SPACE, 0, 0, 0);
+    pDualShock2->triangle.press();
   }
 
   if (psxState.circle && !prevPsxState_.circle) {
@@ -401,7 +401,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (!psxState.triangle && prevPsxState_.triangle) {
     printf("Release Triangle");
-    keybd_event(VK_SPACE, 0, KEYEVENTF_KEYUP, 0);
+    pDualShock2->triangle.release();
   }
 
   if (!psxState.circle && prevPsxState_.circle) {

@@ -68,7 +68,7 @@ class DualShock2 : public GamePad {
 public:
   DualShock2(HWND hWnd);
 
-  Button triangle;   // TODO: implement
+  Button triangle;
   Button circle;     // TODO: implement
   Button cross;      // TODO: implement
   Button square;

@@ -52,7 +52,7 @@ private:
 class Button {
 public:
   Button() = default;
-  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey) {}
+  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey), bScan_(bScan), dwFlags_(dwFlags) {}
   bool isPressed() const { return isPressed_; }
 
   void press() {

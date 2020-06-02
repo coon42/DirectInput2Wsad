@@ -84,12 +84,12 @@ public:
   Button circle;
   Button cross;
   Button square;
-  Button start;      // TODO: implement
-  Button select;     // TODO: implement
-  Button l1;         // TODO: implement
-  Button l2;         // TODO: implement
-  Button r1;         // TODO: implement
-  Button r2;         // TODO: implement
+  Button start;
+  Button select;
+  Button l1;
+  Button l2;
+  Button r1;
+  Button r2;
   Button leftStick;  // TODO: implement
   Button rightStick; // TODO: implement
   Button north;      // TODO: implement

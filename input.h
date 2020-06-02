@@ -71,7 +71,7 @@ public:
   DualShock2(HWND hWnd);
 
   Button triangle;
-  Button circle;     // TODO: implement
+  Button circle;
   Button cross;      // TODO: implement
   Button square;
   Button start;      // TODO: implement

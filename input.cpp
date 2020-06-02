@@ -155,7 +155,8 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
 
-DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE), square(VK_MENU) {
+DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
+    circle(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY), square(VK_MENU) {
 
 }
 
@@ -331,7 +332,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (psxState.circle && !prevPsxState_.circle) {
     printf("Press Circle");
-    keybd_event(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY, 0);
+    pDualShock2->circle.press();
   }
 
   if (psxState.cross && !prevPsxState_.cross) {
@@ -406,7 +407,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
 
   if (!psxState.circle && prevPsxState_.circle) {
     printf("Release Circle");
-    keybd_event(VK_END, 0x4f, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY, 0);
+    pDualShock2->circle.release();
   }
 
   if (!psxState.cross && prevPsxState_.cross) {

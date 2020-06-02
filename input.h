@@ -52,13 +52,14 @@ private:
 class Button {
 public:
   Button() = default;
-  Button(BYTE vKey, BYTE bScan = 0) : vKey_(vKey) {}
-  void press()                    { keybd_event(vKey_, bScan_, 0, 0); }
-  void release()                  { keybd_event(vKey_, bScan_, KEYEVENTF_KEYUP, 0); }
+  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey) {}
+  void press()                    { keybd_event(vKey_, bScan_, dwFlags_, 0); }
+  void release()                  { keybd_event(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_, 0); }
 
 private:
   BYTE vKey_{0};
   BYTE bScan_{0};
+  DWORD dwFlags_{0};
 };
 
 //-------------------------------------------------------------------------------------------------------------

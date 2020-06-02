@@ -68,22 +68,22 @@ class DualShock2 : public GamePad {
 public:
   DualShock2(HWND hWnd);
 
-  Button triangle;
-  Button circle;
-  Button cross;
+  Button triangle;   // TODO: implement
+  Button circle;     // TODO: implement
+  Button cross;      // TODO: implement
   Button square;
-  Button start;
-  Button select;
-  Button l1;
-  Button l2;
-  Button r1;
-  Button r2;
-  Button leftStick;
-  Button rightStick;
-  Button north;
-  Button east;
-  Button south;
-  Button west;
+  Button start;      // TODO: implement
+  Button select;     // TODO: implement
+  Button l1;         // TODO: implement
+  Button l2;         // TODO: implement
+  Button r1;         // TODO: implement
+  Button r2;         // TODO: implement
+  Button leftStick;  // TODO: implement
+  Button rightStick; // TODO: implement
+  Button north;      // TODO: implement
+  Button east;       // TODO: implement
+  Button south;      // TODO: implement
+  Button west;       // TODO: implement
 
   // TODO: make private
   struct State {

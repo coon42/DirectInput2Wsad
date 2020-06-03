@@ -161,7 +161,7 @@ DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
     select(VK_ESCAPE),
     l1(VK_NUMPAD0, 0x52),
     l2(190), // , | VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY
-    r1(VK_SHIFT, MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC)), // VK_NUMPAD1, 0x4F | VK_SHIFT
+    r1(VK_SHIFT), // MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC)), // VK_NUMPAD1, 0x4F
     r2(189), // - | VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY
     north(VK_UP),
     east(VK_RIGHT),

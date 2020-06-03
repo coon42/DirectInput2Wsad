@@ -56,16 +56,27 @@ public:
   bool isPressed() const { return isPressed_; }
 
   void press() {
-    keybd_event(vKey_, bScan_, dwFlags_, 0);
+    sendInput(vKey_, bScan_, dwFlags_);
     isPressed_ = true;
   }
 
   void release() {
-    keybd_event(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_, 0);
+    sendInput(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_);
     isPressed_ = false;
   }
 
 private:
+  void sendInput(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) {
+    INPUT ip{0};
+    ip.type = INPUT_KEYBOARD;
+    ip.ki.wScan = bScan;
+    ip.ki.time = 0;
+    ip.ki.dwExtraInfo = 0;
+    ip.ki.wVk = vKey;
+    ip.ki.dwFlags = dwFlags;
+    SendInput(1, &ip, sizeof(INPUT));
+  }
+
   bool isPressed_{false};
   BYTE vKey_{0};
   BYTE bScan_{0};

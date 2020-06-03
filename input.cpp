@@ -249,28 +249,6 @@ Application::~Application() {
   hWnd_ = 0;
 }
 
-void Application::pressKey(WORD vKey, bool isExtendedKey) {
-  INPUT ip{0};
-  ip.type = INPUT_KEYBOARD;
-  ip.ki.wScan = 0;
-  ip.ki.time = 0;
-  ip.ki.dwExtraInfo = 0;
-  ip.ki.wVk = vKey;
-  ip.ki.dwFlags = 0 | (isExtendedKey ? KEYEVENTF_EXTENDEDKEY : 0); // 0 for key press
-  SendInput(1, &ip, sizeof(INPUT));
-}
-
-void Application::releaseKey(WORD vKey, bool isExtendedKey) {
-  INPUT ip{0};
-  ip.type = INPUT_KEYBOARD;
-  ip.ki.wScan = 0;
-  ip.ki.time = 0;
-  ip.ki.dwExtraInfo = 0;
-  ip.ki.wVk = vKey;
-  ip.ki.dwFlags = KEYEVENTF_KEYUP | (isExtendedKey ? KEYEVENTF_EXTENDEDKEY : 0);
-  SendInput(1, &ip, sizeof(INPUT));
-}
-
 void Application::createDummyWindow() {
   WNDCLASSEX wcex;
   wcex.cbSize = sizeof(WNDCLASSEX);

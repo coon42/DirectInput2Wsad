@@ -237,19 +237,19 @@ DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
 }
 
 //-------------------------------------------------------------------------------------------------------------
-// Input
+// Application
 //-------------------------------------------------------------------------------------------------------------
 
-Input::Input() : hInstance_(GetModuleHandle(NULL)) {
+Application::Application() : hInstance_(GetModuleHandle(NULL)) {
   createDummyWindow();
 }
 
-Input::~Input() {
+Application::~Application() {
   DestroyWindow(hWnd_);
   hWnd_ = 0;
 }
 
-void Input::pressKey(WORD vKey, bool isExtendedKey) {
+void Application::pressKey(WORD vKey, bool isExtendedKey) {
   INPUT ip{0};
   ip.type = INPUT_KEYBOARD;
   ip.ki.wScan = 0;
@@ -260,7 +260,7 @@ void Input::pressKey(WORD vKey, bool isExtendedKey) {
   SendInput(1, &ip, sizeof(INPUT));
 }
 
-void Input::releaseKey(WORD vKey, bool isExtendedKey) {
+void Application::releaseKey(WORD vKey, bool isExtendedKey) {
   INPUT ip{0};
   ip.type = INPUT_KEYBOARD;
   ip.ki.wScan = 0;
@@ -271,7 +271,7 @@ void Input::releaseKey(WORD vKey, bool isExtendedKey) {
   SendInput(1, &ip, sizeof(INPUT));
 }
 
-void Input::createDummyWindow() {
+void Application::createDummyWindow() {
   WNDCLASSEX wcex;
   wcex.cbSize = sizeof(WNDCLASSEX);
   wcex.style = CS_HREDRAW | CS_VREDRAW;
@@ -297,7 +297,7 @@ void Input::createDummyWindow() {
   UpdateWindow(hWnd_);
 }
 
-void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psxState) {
+void Application::processButtons(DualShock2* pDualShock2, const DualShock2::State& psxState) {
   printf("event!\n");
 
   // Presses
@@ -451,7 +451,7 @@ void Input::processButtons(DualShock2* pDualShock2, const DualShock2::State& psx
   prevPsxState_ = psxState;
 }
 
-void Input::run() {
+void Application::run() {
   DualShock2 gamepad(hWnd_);
   gamepad.open(1); // TODO: make configurable over ini file
 
@@ -469,7 +469,7 @@ void Input::run() {
   gamepad.close();
 }
 
-LRESULT CALLBACK Input::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
+LRESULT CALLBACK Application::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {
   switch (message) {
     case WM_ACTIVATE: {
       break;

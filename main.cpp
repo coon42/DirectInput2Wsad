@@ -6,9 +6,9 @@
 //-------------------------------------------------------------------------------------------------------------
 
 int main(const char* pArgs, int argc) {
-  // TODO: move Config to Input class:
+  // TODO: move Config to Application class:
   Config config("config.ini");
 
-  Input input;
-  input.run();
+  Application app;
+  app.run();
 }

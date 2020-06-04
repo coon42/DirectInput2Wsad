@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <conio.h>
 
-#include "input.h"
+#include "gamepad.h"
 #include "main.h"
 
 //-------------------------------------------------------------------------------------------------------------

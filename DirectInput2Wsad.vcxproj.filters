@@ -18,7 +18,7 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="input.cpp">
+    <ClCompile Include="gamepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -26,7 +26,7 @@
     <ClInclude Include="main.h">
       <Filter>Source Files</Filter>
     </ClInclude>
-    <ClInclude Include="input.h">
+    <ClInclude Include="gamepad.h">
       <Filter>Source Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -1,5 +1,5 @@
-#ifndef INPUT_H
-#define INPUT_H
+#ifndef GAMEPAD_H
+#define GAMEPAD_H
 
 #define DIRECTINPUT_VERSION 0x0800
 #include <dinput.h>
@@ -136,4 +136,4 @@ private:
   State prevState_{0};
 };
 
-#endif // INPUT_H
+#endif // GAMEPAD_H

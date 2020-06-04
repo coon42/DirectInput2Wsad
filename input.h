@@ -136,24 +136,4 @@ private:
   State prevState_{0};
 };
 
-//-------------------------------------------------------------------------------------------------------------
-// Application
-//-------------------------------------------------------------------------------------------------------------
-
-class Application {
-public:
-  Application();
-  ~Application();
-
-  void run();
-
-private:
-  void createDummyWindow();
-  static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
-
-  HWND hWnd_{0};
-  const HINSTANCE hInstance_{0};
-  bool running_{true};
-};
-
 #endif // INPUT_H

@@ -33,13 +33,14 @@ public:
   virtual void processButtons() = 0;
 
 protected:
-  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr}; // CHECKME: make private?
+  DIJOYSTATE getJoyState() const;
 
 private:
   static BOOL _enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref);
 
   const HWND hWnd_{0};
   IDirectInput8* pInput_{nullptr};
+  LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr};
   LPCDIDEVICEINSTANCE pGamepadInstance_{nullptr};
   int openIndex_{0};
   int enumCount_{0};
@@ -130,9 +131,7 @@ private:
   Button south;
   Button west;
 
-  State getButtonState();
   static State joyState2Psx(const DIJOYSTATE& joyState);
-
   DualShock2::State prevState_{0};
 };
 

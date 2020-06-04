@@ -170,14 +170,14 @@ DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
 
 }
 
-DualShock2::State DualShock2::getButtonState() {
+DIJOYSTATE GamePad::getJoyState() const {
   DIJOYSTATE joyState;
   HRESULT result = pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
 
   if (FAILED(result))
     throw result;
 
-  return DualShock2::joyState2Psx(joyState);
+  return joyState;
 }
 
 DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
@@ -278,7 +278,7 @@ void Application::createDummyWindow() {
 void DualShock2::processButtons() {
   printf("event!\n");
 
-  const State state = getButtonState();
+  const State state = joyState2Psx(getJoyState());
 
   // Presses
   if (state.select && !prevState_.select) {

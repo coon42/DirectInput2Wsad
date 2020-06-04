@@ -18,6 +18,22 @@ Application::~Application() {
   hWnd_ = 0;
 }
 
+void Application::run() {
+  std::auto_ptr<GamePad> pGamepad(new DualShock2(hWnd_));
+  pGamepad->open(1); // TODO: make configurable over ini file
+
+  while (running_) {
+    if (pGamepad->waitForButtonEvent(250))
+      pGamepad->processButtons();
+
+    if (_kbhit())
+      if (_getch() == 'q')
+        break;
+  }
+
+  pGamepad->close();
+}
+
 void Application::createDummyWindow() {
   WNDCLASSEX wcex;
   wcex.cbSize = sizeof(WNDCLASSEX);
@@ -42,22 +58,6 @@ void Application::createDummyWindow() {
 
   ShowWindow(hWnd_, SW_HIDE);
   UpdateWindow(hWnd_);
-}
-
-void Application::run() {
-  std::auto_ptr<GamePad> pGamepad(new DualShock2(hWnd_));
-  pGamepad->open(1); // TODO: make configurable over ini file
-
-  while (running_) {
-    if (pGamepad->waitForButtonEvent(250))
-      pGamepad->processButtons();
-
-    if (_kbhit())
-      if (_getch() == 'q')
-        break;
-  }
-
-  pGamepad->close();
 }
 
 LRESULT CALLBACK Application::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {

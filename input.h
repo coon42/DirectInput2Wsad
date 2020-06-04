@@ -90,25 +90,9 @@ private:
 class DualShock2 : public GamePad {
 public:
   DualShock2(HWND hWnd);
+  void processButtons();
 
-  Button triangle;
-  Button circle;
-  Button cross;
-  Button square;
-  Button start;
-  Button select;
-  Button l1;
-  Button l2;
-  Button r1;
-  Button r2;
-  Button leftStick;
-  Button rightStick;
-  Button north;
-  Button east;
-  Button south;
-  Button west;
-
-  // TODO: make private
+private:
   struct State {
     bool triangle;
     bool circle;
@@ -128,14 +112,27 @@ public:
     bool west;
   };
 
-  void processButtons(const DualShock2::State& psxState);
+  Button triangle;
+  Button circle;
+  Button cross;
+  Button square;
+  Button start;
+  Button select;
+  Button l1;
+  Button l2;
+  Button r1;
+  Button r2;
+  Button leftStick;
+  Button rightStick;
+  Button north;
+  Button east;
+  Button south;
+  Button west;
 
-  State getButtonState(); // TODO: make private
-
-private:
-  DualShock2::State prevState_{0};
-
+  State getButtonState();
   static State joyState2Psx(const DIJOYSTATE& joyState);
+
+  DualShock2::State prevState_{0};
 };
 
 //-------------------------------------------------------------------------------------------------------------

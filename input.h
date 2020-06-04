@@ -30,6 +30,7 @@ public:
   void open(int index);
   void close();
   bool waitForButtonEvent(int timeoutMs);
+  virtual void processButtons() = 0;
 
 protected:
   LPDIRECTINPUTDEVICE8 pGamepadDevice_{nullptr}; // CHECKME: make private?
@@ -90,7 +91,7 @@ private:
 class DualShock2 : public GamePad {
 public:
   DualShock2(HWND hWnd);
-  void processButtons();
+  virtual void processButtons() final override;
 
 private:
   struct State {

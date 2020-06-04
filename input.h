@@ -149,8 +149,6 @@ public:
 
 private:
   void createDummyWindow();
-  void pressKey(WORD vKey, bool isExtendedKey = false);
-  void releaseKey(WORD vKey, bool isExtendedKey = false);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
   HWND hWnd_{0};

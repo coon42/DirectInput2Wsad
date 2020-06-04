@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <conio.h>
+#include <memory>
 
 #include "gamepad.h"
 #include "main.h"
@@ -44,19 +45,19 @@ void Application::createDummyWindow() {
 }
 
 void Application::run() {
-  DualShock2 gamepad(hWnd_);
-  gamepad.open(1); // TODO: make configurable over ini file
+  std::auto_ptr<GamePad> pGamepad(new DualShock2(hWnd_));
+  pGamepad->open(1); // TODO: make configurable over ini file
 
   while (running_) {
-    if (gamepad.waitForButtonEvent(250))
-      gamepad.processButtons();
+    if (pGamepad->waitForButtonEvent(250))
+      pGamepad->processButtons();
 
     if (_kbhit())
       if (_getch() == 'q')
         break;
   }
 
-  gamepad.close();
+  pGamepad->close();
 }
 
 LRESULT CALLBACK Application::_wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam) {

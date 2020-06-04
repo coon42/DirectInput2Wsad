@@ -114,6 +114,8 @@ private:
     bool west;
   };
 
+  static State joyState2Psx(const DIJOYSTATE& joyState);
+
   Button triangle;
   Button circle;
   Button cross;
@@ -131,8 +133,7 @@ private:
   Button south;
   Button west;
 
-  static State joyState2Psx(const DIJOYSTATE& joyState);
-  DualShock2::State prevState_{0};
+  State prevState_{0};
 };
 
 //-------------------------------------------------------------------------------------------------------------

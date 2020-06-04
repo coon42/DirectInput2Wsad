@@ -91,6 +91,16 @@ bool GamePad::waitForButtonEvent(int timeoutMs) {
   return true;
 }
 
+DIJOYSTATE GamePad::getJoyState() const {
+  DIJOYSTATE joyState;
+  HRESULT result = pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
+
+  if (FAILED(result))
+    throw result;
+
+  return joyState;
+}
+
 BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
   GamePad* const pThis = static_cast<GamePad*>(pVref);
   printf("%d: %s", pThis->enumCount_, pLpddi->tszInstanceName);
@@ -168,111 +178,6 @@ DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
     south(VK_DOWN),
     west(VK_LEFT) {
 
-}
-
-DIJOYSTATE GamePad::getJoyState() const {
-  DIJOYSTATE joyState;
-  HRESULT result = pGamepadDevice_->GetDeviceState(sizeof(DIJOYSTATE), &joyState);
-
-  if (FAILED(result))
-    throw result;
-
-  return joyState;
-}
-
-DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
-  DualShock2::State state{0};
-  state.triangle = joyState.rgbButtons[0];
-  state.circle = joyState.rgbButtons[1];
-  state.cross = joyState.rgbButtons[2];
-  state.square = joyState.rgbButtons[3];
-  state.start = joyState.rgbButtons[9];
-  state.select = joyState.rgbButtons[8];
-  state.l1 = joyState.rgbButtons[6];
-  state.l2 = joyState.rgbButtons[4];
-  state.r1 = joyState.rgbButtons[7];
-  state.r2 = joyState.rgbButtons[5];
-  state.leftStick = joyState.rgbButtons[10];
-  state.rightStick = joyState.rgbButtons[11];
-
-  switch (joyState.rgdwPOV[0]) {
-    case 0:
-      state.north = true;
-      break;
-
-    case 4500:
-      state.north = true;
-      state.east = true;
-      break;
-
-    case 9000:
-      state.east = true;
-      break;
-
-    case 13500:
-      state.east = true;
-      state.south = true;
-      break;
-
-    case 18000:
-      state.south = true;
-      break;
-
-    case 22500:
-      state.south = true;
-      state.west = true;
-      break;
-
-    case 27000:
-      state.west = true;
-      break;
-
-    case 31500:
-      state.west = true;
-      state.north = true;
-      break;
-  }
-
-  return state;
-}
-
-//-------------------------------------------------------------------------------------------------------------
-// Application
-//-------------------------------------------------------------------------------------------------------------
-
-Application::Application() : hInstance_(GetModuleHandle(NULL)) {
-  createDummyWindow();
-}
-
-Application::~Application() {
-  DestroyWindow(hWnd_);
-  hWnd_ = 0;
-}
-
-void Application::createDummyWindow() {
-  WNDCLASSEX wcex;
-  wcex.cbSize = sizeof(WNDCLASSEX);
-  wcex.style = CS_HREDRAW | CS_VREDRAW;
-  wcex.lpfnWndProc = _wndProc;
-  wcex.cbClsExtra = 0;
-  wcex.cbWndExtra = 0;
-  wcex.hInstance = hInstance_;
-  wcex.hIcon = 0;
-  wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
-  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
-  wcex.lpszMenuName = NULL;
-  wcex.lpszClassName = "Dummy";
-  wcex.hIconSm = 0;
-  RegisterClassEx(&wcex);
-
-  hWnd_ = CreateWindow(wcex.lpszClassName, "dummy", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
-      0, 100, 100, nullptr, nullptr, hInstance_, nullptr);
-
-  if (!hWnd_)
-    throw false;
-
-  ShowWindow(hWnd_, SW_HIDE);
-  UpdateWindow(hWnd_);
 }
 
 void DualShock2::processButtons() {
@@ -429,6 +334,101 @@ void DualShock2::processButtons() {
   printf("\n");
 
   prevState_ = state;
+}
+
+DualShock2::State DualShock2::joyState2Psx(const DIJOYSTATE& joyState) {
+  State state{0};
+  state.triangle = joyState.rgbButtons[0];
+  state.circle = joyState.rgbButtons[1];
+  state.cross = joyState.rgbButtons[2];
+  state.square = joyState.rgbButtons[3];
+  state.start = joyState.rgbButtons[9];
+  state.select = joyState.rgbButtons[8];
+  state.l1 = joyState.rgbButtons[6];
+  state.l2 = joyState.rgbButtons[4];
+  state.r1 = joyState.rgbButtons[7];
+  state.r2 = joyState.rgbButtons[5];
+  state.leftStick = joyState.rgbButtons[10];
+  state.rightStick = joyState.rgbButtons[11];
+
+  switch (joyState.rgdwPOV[0]) {
+    case 0:
+      state.north = true;
+      break;
+
+    case 4500:
+      state.north = true;
+      state.east = true;
+      break;
+
+    case 9000:
+      state.east = true;
+      break;
+
+    case 13500:
+      state.east = true;
+      state.south = true;
+      break;
+
+    case 18000:
+      state.south = true;
+      break;
+
+    case 22500:
+      state.south = true;
+      state.west = true;
+      break;
+
+    case 27000:
+      state.west = true;
+      break;
+
+    case 31500:
+      state.west = true;
+      state.north = true;
+      break;
+  }
+
+  return state;
+}
+
+//-------------------------------------------------------------------------------------------------------------
+// Application
+//-------------------------------------------------------------------------------------------------------------
+
+Application::Application() : hInstance_(GetModuleHandle(NULL)) {
+  createDummyWindow();
+}
+
+Application::~Application() {
+  DestroyWindow(hWnd_);
+  hWnd_ = 0;
+}
+
+void Application::createDummyWindow() {
+  WNDCLASSEX wcex;
+  wcex.cbSize = sizeof(WNDCLASSEX);
+  wcex.style = CS_HREDRAW | CS_VREDRAW;
+  wcex.lpfnWndProc = _wndProc;
+  wcex.cbClsExtra = 0;
+  wcex.cbWndExtra = 0;
+  wcex.hInstance = hInstance_;
+  wcex.hIcon = 0;
+  wcex.hCursor = LoadCursor(nullptr, IDC_ARROW);
+  wcex.hbrBackground = (HBRUSH)(COLOR_WINDOW + 1);
+  wcex.lpszMenuName = NULL;
+  wcex.lpszClassName = "Dummy";
+  wcex.hIconSm = 0;
+  RegisterClassEx(&wcex);
+
+  hWnd_ = CreateWindow(wcex.lpszClassName, "dummy", WS_OVERLAPPEDWINDOW, CW_USEDEFAULT,
+      0, 100, 100, nullptr, nullptr, hInstance_, nullptr);
+
+  if (!hWnd_)
+    throw false;
+
+  ShowWindow(hWnd_, SW_HIDE);
+  UpdateWindow(hWnd_);
 }
 
 void Application::run() {

@@ -20,6 +20,27 @@ private:
 };
 
 //-------------------------------------------------------------------------------------------------------------
+// Button
+//-------------------------------------------------------------------------------------------------------------
+
+class Button {
+public:
+  Button() = default;
+  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey), bScan_(bScan), dwFlags_(dwFlags) {}
+  bool isPressed() const { return isPressed_; }
+  void press();
+  void release();
+
+private:
+  void sendInput(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0);
+
+  bool isPressed_{false};
+  BYTE vKey_{0};
+  BYTE bScan_{0};
+  DWORD dwFlags_{0};
+};
+
+//-------------------------------------------------------------------------------------------------------------
 // GamePad
 //-------------------------------------------------------------------------------------------------------------
 
@@ -45,44 +66,6 @@ private:
   int openIndex_{0};
   int enumCount_{0};
   HANDLE hButtonEvent_{INVALID_HANDLE_VALUE};
-};
-
-//-------------------------------------------------------------------------------------------------------------
-// Button
-//-------------------------------------------------------------------------------------------------------------
-
-class Button {
-public:
-  Button() = default;
-  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey), bScan_(bScan), dwFlags_(dwFlags) {}
-  bool isPressed() const { return isPressed_; }
-
-  void press() {
-    sendInput(vKey_, bScan_, dwFlags_);
-    isPressed_ = true;
-  }
-
-  void release() {
-    sendInput(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_);
-    isPressed_ = false;
-  }
-
-private:
-  void sendInput(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) {
-    INPUT ip{0};
-    ip.type = INPUT_KEYBOARD;
-    ip.ki.wScan = bScan;
-    ip.ki.time = 0;
-    ip.ki.dwExtraInfo = 0;
-    ip.ki.wVk = vKey;
-    ip.ki.dwFlags = dwFlags;
-    SendInput(1, &ip, sizeof(INPUT));
-  }
-
-  bool isPressed_{false};
-  BYTE vKey_{0};
-  BYTE bScan_{0};
-  DWORD dwFlags_{0};
 };
 
 //-------------------------------------------------------------------------------------------------------------

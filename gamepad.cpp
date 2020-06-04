@@ -16,6 +16,31 @@ void Config::createDefaultConfig() {
 }
 
 //-------------------------------------------------------------------------------------------------------------
+// Button
+//-------------------------------------------------------------------------------------------------------------
+
+void Button::press() {
+  sendInput(vKey_, bScan_, dwFlags_);
+  isPressed_ = true;
+}
+
+void Button::release() {
+  sendInput(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_);
+  isPressed_ = false;
+}
+
+void Button::sendInput(BYTE vKey, BYTE bScan, DWORD dwFlags) {
+  INPUT ip{0};
+  ip.type = INPUT_KEYBOARD;
+  ip.ki.wScan = bScan;
+  ip.ki.time = 0;
+  ip.ki.dwExtraInfo = 0;
+  ip.ki.wVk = vKey;
+  ip.ki.dwFlags = dwFlags;
+  SendInput(1, &ip, sizeof(INPUT));
+}
+
+//-------------------------------------------------------------------------------------------------------------
 // GamePad
 //-------------------------------------------------------------------------------------------------------------
 

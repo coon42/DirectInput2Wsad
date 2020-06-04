@@ -275,158 +275,158 @@ void Application::createDummyWindow() {
   UpdateWindow(hWnd_);
 }
 
-void Application::processButtons(DualShock2* pDualShock2, const DualShock2::State& psxState) {
+void DualShock2::processButtons(const DualShock2::State& psxState) {
   printf("event!\n");
 
   // Presses
-  if (psxState.select && !prevPsxState_.select) {
-    if (!prevPsxState_.cross) {
+  if (psxState.select && !prevState_.select) {
+    if (!prevState_.cross) {
       printf("Press Select");
-      pDualShock2->select.press();
+      select.press();
     }
     else
       printf("Did not press select to avoid windows key shortcut!");
   }
 
-  if (psxState.start && !prevPsxState_.start) {
+  if (psxState.start && !prevState_.start) {
     printf("Press Start");
-    pDualShock2->start.press();
+    start.press();
   }
 
-  if (psxState.north && !prevPsxState_.north) {
+  if (psxState.north && !prevState_.north) {
     printf("Press up");
-    pDualShock2->north.press();
+    north.press();
   }
 
-  if (psxState.west && !prevPsxState_.west) {
+  if (psxState.west && !prevState_.west) {
     printf("Press left");
-    pDualShock2->west.press();
+    west.press();
   }
 
-  if (psxState.south && !prevPsxState_.south) {
+  if (psxState.south && !prevState_.south) {
     printf("Press down");
-    pDualShock2->south.press();
+    south.press();
   }
 
-  if (psxState.east && !prevPsxState_.east) {
+  if (psxState.east && !prevState_.east) {
     printf("Press right");
-    pDualShock2->east.press();
+    east.press();
   }
 
-  if (psxState.triangle && !prevPsxState_.triangle) {
+  if (psxState.triangle && !prevState_.triangle) {
     printf("Press Triangle");
-    pDualShock2->triangle.press();
+    triangle.press();
   }
 
-  if (psxState.circle && !prevPsxState_.circle) {
+  if (psxState.circle && !prevState_.circle) {
     printf("Press Circle");
-    pDualShock2->circle.press();
+    circle.press();
   }
 
-  if (psxState.cross && !prevPsxState_.cross) {
+  if (psxState.cross && !prevState_.cross) {
     printf("Press Cross");
-    pDualShock2->cross.press();
+    cross.press();
   }
 
-  if (psxState.square && !prevPsxState_.square) {
+  if (psxState.square && !prevState_.square) {
     printf("Press Square");
-    pDualShock2->square.press();
+    square.press();
   }
 
-  if (psxState.l1 && !prevPsxState_.l1) {
+  if (psxState.l1 && !prevState_.l1) {
     printf("Press L1");
-    pDualShock2->l1.press();
+    l1.press();
   }
 
-  if (psxState.r1 && !prevPsxState_.r1) {
+  if (psxState.r1 && !prevState_.r1) {
     printf("Press R1");
-    pDualShock2->r1.press();
+    r1.press();
   }
 
-  if (psxState.l2 && !prevPsxState_.l2) {
+  if (psxState.l2 && !prevState_.l2) {
     printf("Press L2");
-    pDualShock2->l2.press();
+    l2.press();
   }
 
-  if (psxState.r2 && !prevPsxState_.r2) {
+  if (psxState.r2 && !prevState_.r2) {
     printf("Press R2");
-    pDualShock2->r2.press();
+    r2.press();
   }
 
   // Releases
-  if (!psxState.select && prevPsxState_.select) {
+  if (!psxState.select && prevState_.select) {
     printf("Release Select");
-    pDualShock2->select.release();
+    select.release();
   }
 
-  if (!psxState.start && prevPsxState_.start) {
+  if (!psxState.start && prevState_.start) {
     printf("Release Start");
-    pDualShock2->start.release();
+    start.release();
   }
 
-  if (!psxState.north && prevPsxState_.north) {
+  if (!psxState.north && prevState_.north) {
     printf("Release up");
-    pDualShock2->north.release();
+    north.release();
   }
 
-  if (!psxState.west && prevPsxState_.west) {
+  if (!psxState.west && prevState_.west) {
     printf("Release left");
-    pDualShock2->west.release();
+    west.release();
   }
 
-  if (!psxState.south && prevPsxState_.south) {
+  if (!psxState.south && prevState_.south) {
     printf("Release down");
-    pDualShock2->south.release();
+    south.release();
   }
 
-  if (!psxState.east && prevPsxState_.east) {
+  if (!psxState.east && prevState_.east) {
     printf("Release right");
-    pDualShock2->east.release();
+    east.release();
   }
 
-  if (!psxState.triangle && prevPsxState_.triangle) {
+  if (!psxState.triangle && prevState_.triangle) {
     printf("Release Triangle");
-    pDualShock2->triangle.release();
+    triangle.release();
   }
 
-  if (!psxState.circle && prevPsxState_.circle) {
+  if (!psxState.circle && prevState_.circle) {
     printf("Release Circle");
-    pDualShock2->circle.release();
+    circle.release();
   }
 
-  if (!psxState.cross && prevPsxState_.cross) {
+  if (!psxState.cross && prevState_.cross) {
     printf("Release Cross");
-    pDualShock2->cross.release();
+    cross.release();
   }
 
-  if (!psxState.square && prevPsxState_.square) {
+  if (!psxState.square && prevState_.square) {
     printf("Release Square");
-    pDualShock2->square.release();
+    square.release();
   }
 
-  if (!psxState.l1 && prevPsxState_.l1) {
+  if (!psxState.l1 && prevState_.l1) {
     printf("Release L1");
-    pDualShock2->l1.release();
+    l1.release();
   }
 
-  if (!psxState.r1 && prevPsxState_.r1) {
+  if (!psxState.r1 && prevState_.r1) {
     printf("Release R1");
-    pDualShock2->r1.release();
+    r1.release();
   }
 
-  if (!psxState.l2 && prevPsxState_.l2) {
+  if (!psxState.l2 && prevState_.l2) {
     printf("Release L2");
-    pDualShock2->l2.release();
+    l2.release();
   }
 
-  if (!psxState.r2 && prevPsxState_.r2) {
+  if (!psxState.r2 && prevState_.r2) {
     printf("Release R2");
-    pDualShock2->r2.release();
+    r2.release();
   }
 
   printf("\n");
 
-  prevPsxState_ = psxState;
+  prevState_ = psxState;
 }
 
 void Application::run() {
@@ -436,7 +436,7 @@ void Application::run() {
   while (running_) {
     if (gamepad.waitForButtonEvent(250)) {
       DualShock2::State psxState = gamepad.getButtonState();
-      processButtons(&gamepad, psxState);
+      gamepad.processButtons(psxState);
     }
 
     if (_kbhit())

@@ -128,9 +128,13 @@ public:
     bool west;
   };
 
+  void processButtons(const DualShock2::State& psxState);
+
   State getButtonState(); // TODO: make private
 
 private:
+  DualShock2::State prevState_{0};
+
   static State joyState2Psx(const DIJOYSTATE& joyState);
 };
 
@@ -149,13 +153,11 @@ private:
   void createDummyWindow();
   void pressKey(WORD vKey, bool isExtendedKey = false);
   void releaseKey(WORD vKey, bool isExtendedKey = false);
-  void processButtons(DualShock2* pDualShock2, const DualShock2::State& psxState);
   static LRESULT CALLBACK _wndProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam);
 
   HWND hWnd_{0};
   const HINSTANCE hInstance_{0};
   bool running_{true};
-  DualShock2::State prevPsxState_{0};
 };
 
 #endif // INPUT_H

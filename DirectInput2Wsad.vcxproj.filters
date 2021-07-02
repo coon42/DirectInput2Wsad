@@ -19,6 +19,12 @@
     <Filter Include="Source Files\inih\cpp">
       <UniqueIdentifier>{d54df037-5df7-499a-88f3-793160f3c46c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\inih">
+      <UniqueIdentifier>{a7106206-a8ba-4f74-8176-88dbe3fb1177}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\inih\cpp">
+      <UniqueIdentifier>{8a8de7ab-98ce-4d1c-a7e5-498932f6e9e0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -36,16 +42,16 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="gamepad.h">
-      <Filter>Source Files</Filter>
+      <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inih\ini.h">
-      <Filter>Source Files\inih</Filter>
+      <Filter>Header Files\inih</Filter>
     </ClInclude>
     <ClInclude Include="inih\cpp\INIReader.h">
-      <Filter>Source Files\inih\cpp</Filter>
+      <Filter>Header Files\inih\cpp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

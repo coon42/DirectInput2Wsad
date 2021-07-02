@@ -7,12 +7,6 @@
 // Button
 //-------------------------------------------------------------------------------------------------------------
 
-Button::Button(BYTE vKey, BYTE bScan, DWORD dwFlags) {
-  cfg_.vKey = vKey;
-  cfg_.bScan = bScan;
-  cfg_.dwFlags = dwFlags;
-}
-
 Button::Button(ButtonConfig buttonConfig) {
   cfg_ = buttonConfig;
 }

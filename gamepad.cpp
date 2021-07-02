@@ -201,18 +201,22 @@ BOOL GamePad::_enumDeviceCallback(LPCDIDEVICEINSTANCE pLpddi, LPVOID pVref) {
 // DualShock2
 //-------------------------------------------------------------------------------------------------------------
 
-DualShock2::DualShock2(HWND hWnd) : GamePad(hWnd), triangle(VK_SPACE),
-    circle(VK_END, 0x4f, KEYEVENTF_EXTENDEDKEY), cross(VK_RCONTROL), square(VK_MENU),
-    start(188), // ,
-    select(VK_ESCAPE),
-    l1(VK_NUMPAD0, 0x52),
-    l2(190), // , | VK_DELETE, 0x53, KEYEVENTF_EXTENDEDKEY
-    r1(VK_SHIFT), // MapVirtualKey(VK_SHIFT, MAPVK_VK_TO_VSC)), // VK_NUMPAD1, 0x4F
-    r2(189), // - | VK_NEXT, 0x51, KEYEVENTF_KEYUP | KEYEVENTF_EXTENDEDKEY
-    north(VK_UP),
-    east(VK_RIGHT),
-    south(VK_DOWN),
-    west(VK_LEFT) {
+DualShock2::DualShock2(HWND hWnd, const Config& config) : GamePad(hWnd),
+    triangle(config.readButton("triangle")),
+    circle(config.readButton("circle")),
+    cross(config.readButton("cross")),
+    square(config.readButton("square")),
+    start(config.readButton("start")),
+    select(config.readButton("select")),
+    l1(config.readButton("l1")),
+    l2(config.readButton("l2")),
+    r1(config.readButton("r1")),
+    r2(config.readButton("r2")),
+    north(config.readButton("north")),
+    east(config.readButton("east")),
+    south(config.readButton("south")),
+    west(config.readButton("west"))
+{
 
 }
 

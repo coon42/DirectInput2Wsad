@@ -7,7 +7,7 @@
 
 class Application {
 public:
-  Application();
+  Application(const Config& cfg);
   ~Application();
 
   void run();
@@ -19,6 +19,7 @@ private:
   HWND hWnd_{0};
   const HINSTANCE hInstance_{0};
   bool running_{true};
+  const Config cfg_;
 };
 
 #endif // MAIN_H

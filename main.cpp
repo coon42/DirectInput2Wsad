@@ -9,7 +9,7 @@
 // Application
 //-------------------------------------------------------------------------------------------------------------
 
-Application::Application() : hInstance_(GetModuleHandle(NULL)) {
+Application::Application(const Config& cfg) : hInstance_(GetModuleHandle(NULL)), cfg_(cfg) {
   createDummyWindow();
 }
 
@@ -19,7 +19,7 @@ Application::~Application() {
 }
 
 void Application::run() {
-  std::auto_ptr<GamePad> pGamepad(new DualShock2(hWnd_));
+  std::auto_ptr<GamePad> pGamepad(new DualShock2(hWnd_, cfg_));
   pGamepad->open(1); // TODO: make configurable over ini file
 
   while (running_) {
@@ -100,6 +100,6 @@ int main(const char* pArgs, int argc) {
   // TODO: move Config to Application class:
   Config config("config.ini");
 
-  Application app;
+  Application app(config);
   app.run();
 }

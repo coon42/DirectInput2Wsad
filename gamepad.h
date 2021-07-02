@@ -90,7 +90,7 @@ private:
 
 class DualShock2 : public GamePad {
 public:
-  DualShock2(HWND hWnd);
+  DualShock2(HWND hWnd, const Config& config);
   virtual void processButtons() final override;
 
 private:

@@ -138,12 +138,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\config.cpp" />
     <ClCompile Include="src\gamepad.cpp" />
     <ClCompile Include="src\inih\cpp\INIReader.cpp" />
     <ClCompile Include="src\inih\ini.c" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="src\config.h" />
     <ClInclude Include="src\gamepad.h" />
     <ClInclude Include="src\inih\cpp\INIReader.h" />
     <ClInclude Include="src\inih\ini.h" />

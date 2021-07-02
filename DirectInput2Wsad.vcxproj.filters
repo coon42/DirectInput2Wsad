@@ -27,31 +27,37 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="main.cpp">
+    <ClCompile Include="src\gamepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="gamepad.cpp">
+    <ClCompile Include="src\inih\cpp\INIReader.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inih\ini.c">
-      <Filter>Source Files\inih</Filter>
+    <ClCompile Include="src\inih\ini.c">
+      <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="inih\cpp\INIReader.cpp">
-      <Filter>Source Files\inih\cpp</Filter>
+    <ClCompile Include="src\main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\config.cpp">
+      <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="main.h">
+    <ClInclude Include="src\gamepad.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="gamepad.h">
+    <ClInclude Include="src\inih\cpp\INIReader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inih\ini.h">
-      <Filter>Header Files\inih</Filter>
+    <ClInclude Include="src\inih\ini.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inih\cpp\INIReader.h">
-      <Filter>Header Files\inih\cpp</Filter>
+    <ClInclude Include="src\main.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\config.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

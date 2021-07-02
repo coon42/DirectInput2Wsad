@@ -13,6 +13,12 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\inih">
+      <UniqueIdentifier>{361a6066-b4de-45ae-9281-3510053da821}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\inih\cpp">
+      <UniqueIdentifier>{d54df037-5df7-499a-88f3-793160f3c46c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -21,6 +27,12 @@
     <ClCompile Include="gamepad.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="inih\ini.c">
+      <Filter>Source Files\inih</Filter>
+    </ClCompile>
+    <ClCompile Include="inih\cpp\INIReader.cpp">
+      <Filter>Source Files\inih\cpp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -28,6 +40,12 @@
     </ClInclude>
     <ClInclude Include="gamepad.h">
       <Filter>Source Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inih\ini.h">
+      <Filter>Source Files\inih</Filter>
+    </ClInclude>
+    <ClInclude Include="inih\cpp\INIReader.h">
+      <Filter>Source Files\inih\cpp</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

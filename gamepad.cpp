@@ -7,7 +7,7 @@
 // Config
 //-------------------------------------------------------------------------------------------------------------
 
-Config::Config(const std::string& configPath) : configPath_(configPath) {
+Config::Config(const std::string& configPath) : configPath_(configPath), reader(configPath) {
   createDefaultConfig(); // TODO: only create default config when config file does not already exist.
 }
 

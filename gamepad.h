@@ -5,7 +5,7 @@
 #include <dinput.h>
 #include <string>
 
-#include "inih/cpp/INIReader.h"
+#include "src/inih/cpp/INIReader.h"
 
 //-------------------------------------------------------------------------------------------------------------
 // Config

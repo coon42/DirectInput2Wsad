@@ -139,14 +139,14 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="gamepad.cpp" />
-    <ClCompile Include="inih\cpp\INIReader.cpp" />
-    <ClCompile Include="inih\ini.c" />
+    <ClCompile Include="src\inih\cpp\INIReader.cpp" />
+    <ClCompile Include="src\inih\ini.c" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gamepad.h" />
-    <ClInclude Include="inih\cpp\INIReader.h" />
-    <ClInclude Include="inih\ini.h" />
+    <ClInclude Include="src\inih\cpp\INIReader.h" />
+    <ClInclude Include="src\inih\ini.h" />
     <ClInclude Include="main.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

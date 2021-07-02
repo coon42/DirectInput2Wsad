@@ -7,6 +7,16 @@
 // Button
 //-------------------------------------------------------------------------------------------------------------
 
+Button::Button(BYTE vKey, BYTE bScan, DWORD dwFlags) {
+  cfg_.vKey = vKey;
+  cfg_.bScan = bScan;
+  cfg_.dwFlags = dwFlags;
+}
+
+Button::Button(ButtonConfig buttonConfig) {
+  cfg_ = buttonConfig;
+}
+
 void Button::press() {
   sendInput(cfg_.vKey, cfg_.bScan, cfg_.dwFlags);
   isPressed_ = true;

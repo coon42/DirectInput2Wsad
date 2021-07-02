@@ -14,14 +14,8 @@
 class Button {
 public:
   Button() = default;
-  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) {
-    cfg_.vKey = vKey;
-    cfg_.bScan = bScan;
-    cfg_.dwFlags = dwFlags;
-  }
-  Button(ButtonConfig buttonConfig) {
-    cfg_ = buttonConfig;
-  }
+  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0);
+  Button(ButtonConfig buttonConfig);
 
   bool isPressed() const { return isPressed_; }
   void press();

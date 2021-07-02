@@ -20,6 +20,7 @@ struct ButtonConfig {
 class Config {
 public:
   Config(const std::string& configPath);
+  const ButtonConfig readButton(const std::string& buttonName) const;
 
 private:
   void createDefaultConfig();

@@ -20,12 +20,12 @@ void Config::createDefaultConfig() {
 //-------------------------------------------------------------------------------------------------------------
 
 void Button::press() {
-  sendInput(vKey_, bScan_, dwFlags_);
+  sendInput(cfg_.vKey, cfg_.bScan, cfg_.dwFlags);
   isPressed_ = true;
 }
 
 void Button::release() {
-  sendInput(vKey_, bScan_, KEYEVENTF_KEYUP | dwFlags_);
+  sendInput(cfg_.vKey, cfg_.bScan, KEYEVENTF_KEYUP | cfg_.dwFlags);
   isPressed_ = false;
 }
 

@@ -9,6 +9,12 @@
 // Config
 //-------------------------------------------------------------------------------------------------------------
 
+struct ButtonConfig {
+  BYTE vKey{0};
+  BYTE bScan{0};
+  DWORD dwFlags{0};
+};
+
 class Config {
 public:
   Config(const std::string& configPath);
@@ -26,7 +32,15 @@ private:
 class Button {
 public:
   Button() = default;
-  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) : vKey_(vKey), bScan_(bScan), dwFlags_(dwFlags) {}
+  Button(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0) {
+    cfg_.vKey = vKey;
+    cfg_.bScan = bScan;
+    cfg_.dwFlags = dwFlags;
+  }
+  Button(ButtonConfig buttonConfig) {
+    cfg_ = buttonConfig;
+  }
+
   bool isPressed() const { return isPressed_; }
   void press();
   void release();
@@ -35,9 +49,7 @@ private:
   void sendInput(BYTE vKey, BYTE bScan = 0, DWORD dwFlags = 0);
 
   bool isPressed_{false};
-  BYTE vKey_{0};
-  BYTE bScan_{0};
-  DWORD dwFlags_{0};
+  ButtonConfig cfg_;
 };
 
 //-------------------------------------------------------------------------------------------------------------

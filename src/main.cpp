@@ -2,7 +2,7 @@
 #include <conio.h>
 #include <memory>
 
-#include "gamepad.h"
+#include "dualshock2.h"
 #include "main.h"
 
 //-------------------------------------------------------------------------------------------------------------

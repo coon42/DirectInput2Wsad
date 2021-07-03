@@ -27,8 +27,10 @@ void Application::run() {
       pGamepad->processButtons();
 
     if (_kbhit())
-      if (_getch() == 'q')
+      if (_getch() == 'q') {
+        printf("\n");
         break;
+      }
   }
 
   pGamepad->close();

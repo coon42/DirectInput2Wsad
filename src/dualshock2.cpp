@@ -24,7 +24,8 @@ DualShock2::DualShock2(HWND hWnd, const Config& config) : GamePad(hWnd),
 }
 
 void DualShock2::processButtons() {
-  printf("event!\n");
+  // TODO: is there a proper way to clear the current line on console?
+  printf("\r                                                                                        \rEvent: ");
 
   const State state = joyState2Psx(getJoyState());
 
@@ -173,8 +174,6 @@ void DualShock2::processButtons() {
     printf("Release R2");
     r2.release();
   }
-
-  printf("\n");
 
   prevState_ = state;
 }
